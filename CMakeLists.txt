@@ -29,6 +29,8 @@ add_definitions(-std=c++11 -march=native -O3 -Wall)
 set (FILES_TO_COMPILE
      Support.cpp
      SupportTest.cpp
+     ReferenceSolution.cpp
+     ReferenceSolutionTest.cpp
      main.cpp
 )
 
