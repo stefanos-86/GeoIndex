@@ -33,6 +33,7 @@ set (FILES_TO_COMPILE
      ReferenceSolutionTest.cpp
      GeometryIndex.cpp
      GeometryIndexTest.cpp
+     PerfTest.cpp
      main.cpp
 )
 
