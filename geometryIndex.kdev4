@@ -1,0 +1,4 @@
+[Project]
+Name=geometryIndex
+Manager=KDevCMakeManager
+VersionControl=kdevgit
