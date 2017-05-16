@@ -1,6 +1,16 @@
-#include <iostream>
+/* To get gtest:
+ *  sudo apt-get install gtest-dev
+ * Then go in the folder (/usr/src/gtest) and
+ *  sudo cmake -DBUILD_SHARED_LIBS=ON CMakeLists.txt
+ *  sudo make
+ * 
+ * ...there should be better instructions on Google.
+ */
 
-int main(int argc, char **argv) {
-    std::cout << "Hello, world!" << std::endl;
-    return 0;
+#include "gtest/gtest.h"
+
+int main(int argc, char** argv) {
+    
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
