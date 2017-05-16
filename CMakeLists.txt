@@ -31,6 +31,8 @@ set (FILES_TO_COMPILE
      SupportTest.cpp
      ReferenceSolution.cpp
      ReferenceSolutionTest.cpp
+     GeometryIndex.cpp
+     GeometryIndexTest.cpp
      main.cpp
 )
 
