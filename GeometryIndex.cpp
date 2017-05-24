@@ -1,6 +1,7 @@
 #include "GeometryIndex.hpp"
 
 #include <algorithm>
+#include <parallel/algorithm>
 
 namespace geoIndex {
   
@@ -11,9 +12,12 @@ void GeometryIndex::index(const Point& p, const PointIndex index) {
 }
 
 void GeometryIndex::prepareForLookups() {
-  std::sort(begin(indexX), end(indexX));  // The latest STL has a parallel sort that could be useful...
+  /*std::sort(begin(indexX), end(indexX));  // The latest STL has a parallel sort that could be useful...
   std::sort(begin(indexY), end(indexY));
-  std::sort(begin(indexZ), end(indexZ));
+  std::sort(begin(indexZ), end(indexZ));*/
+  __gnu_parallel::sort(indexX.begin(), indexX.end());
+  __gnu_parallel::sort(indexY.begin(), indexY.end());
+  __gnu_parallel::sort(indexZ.begin(), indexZ.end());
 }
 
 

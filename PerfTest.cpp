@@ -5,12 +5,15 @@
 #include "Support.hpp"
 #include "ReferenceSolution.hpp"
 #include "GeometryIndex.hpp"
+#include "CubeIndex.hpp"
 
 #include <ctime>
 
 class PoorMansTimer{
 public:
-  PoorMansTimer() {
+  PoorMansTimer(const std::string& message) :
+  message(message)
+  {
     begin = std::clock();
   }
   
@@ -18,9 +21,11 @@ public:
     clock_t end = std::clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    std::cout << "Seconds : " << elapsed_secs << std::endl;
+    std::cout << message << " took " << elapsed_secs << " seconds" << std::endl;
   }
   
+private:
+  const std::string message;
   clock_t begin;
 
 };
@@ -30,15 +35,15 @@ public:
 //From http://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c
 double fRand()
 {
-  const double fMin = -1000;
-  const double fMax = +1000;
+  const double fMin = -2000;
+  const double fMax = +2000;
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
 
 namespace geoIndex {
   static void fillRedGrid(std::vector<Point>& redGrid) {
-    const uint32_t pointsToUse = 1000000;
+    const uint32_t pointsToUse = 700000;
     redGrid.clear();
     redGrid.reserve(pointsToUse);
     for (uint32_t i = 0; i < pointsToUse; ++i)
@@ -47,17 +52,19 @@ namespace geoIndex {
   
   
   TEST(performance, base) { // 450 to 500 ms on my machine.
+    PoorMansTimer fullTest("baseline whole test");
     std::vector<Point> redGrid;
     fillRedGrid(redGrid);
     Point greenPoint{0, 0, 0};
     
-    { PoorMansTimer t;
+    { PoorMansTimer t("baseline lookups");
     const auto result = TwoClosestPoints(greenPoint, redGrid);
     std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
     }
   }
   
-  TEST(performance, optimized) {  // 1000ms... Does not work!!!
+  TEST(performance, aabbCulling) {  // 1000ms... Does not work!!!
+    PoorMansTimer fullTest("aabb whole test");
     std::vector<Point> redGrid;
     fillRedGrid(redGrid);
     Point greenPoint{0, 0, 0};
@@ -67,9 +74,9 @@ namespace geoIndex {
       gi.index(redGrid[i], i);
     gi.prepareForLookups();
     
-    { PoorMansTimer t;
+    { PoorMansTimer t("aabb lookups");
     std::vector<PointIndex> closePointsIndexes;
-    gi.withinAabb(greenPoint, 30.0, closePointsIndexes);
+    gi.withinAabb(greenPoint, 100.0, closePointsIndexes);
     
     
     std::vector<Point> closePoints;
@@ -81,6 +88,32 @@ namespace geoIndex {
     
     std::cout << "Points from aabb: " << closePoints.size() << std::endl;
     // Now do the test, but only on a few points.
+    const auto result = TwoClosestPoints(greenPoint, closePoints);
+    std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
+    }
+  }
+  
+  TEST(performance, CubeIndex) {
+    PoorMansTimer fullTest("cubes whole test");
+    std::vector<Point> redGrid;
+    fillRedGrid(redGrid);
+    Point greenPoint{0, 0, 0};
+    
+    CubeIndex cu(500);
+    for (size_t i = 0; i < redGrid.size(); ++i)
+      cu.addOnePoint(redGrid[i], i);
+    
+    { PoorMansTimer t("cubes lookups");
+      std::vector<PointIndex> closePointsIndexes;
+      cu.closeTo(greenPoint, closePointsIndexes);
+      
+      std::vector<Point> closePoints;
+      closePoints.reserve(closePointsIndexes.size());
+      for (const auto i : closePointsIndexes)
+        closePoints.push_back(redGrid[i]);
+      // Same considerations about checking a sphere as the aabb culling...
+     
+    std::cout << "Points from cubes: " << closePoints.size() << std::endl;
     const auto result = TwoClosestPoints(greenPoint, closePoints);
     std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
     }

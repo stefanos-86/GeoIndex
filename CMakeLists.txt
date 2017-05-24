@@ -22,9 +22,10 @@ link_directories(
 # 
 # C++ 11 for practicality.
 # -O3 to optimize.
-# -march=native to optimize even more (but the binary can not be used on another machine).
+# -march=native to optimize even more (but the binary can not be used on another machine, or with valgrind).
 # -Wall to spot issues.
-add_definitions(-std=c++11 -march=native -O3 -Wall)
+# -fopenmp because (with gomp below) gives parallel algorithms before having c++17.
+add_definitions(-std=c++11 -O3 -Wall -fopenmp) #-march=native 
 
 set (FILES_TO_COMPILE
      Support.cpp
@@ -33,12 +34,14 @@ set (FILES_TO_COMPILE
      ReferenceSolutionTest.cpp
      GeometryIndex.cpp
      GeometryIndexTest.cpp
+     CubeIndex.cpp
+     CubeIndexTest.cpp
      PerfTest.cpp
      main.cpp
 )
 
 add_executable(geometryindex ${FILES_TO_COMPILE})
-target_link_libraries(geometryindex ${GTEST_BOTH_LIBRARIES} pthread)
+target_link_libraries(geometryindex ${GTEST_BOTH_LIBRARIES} pthread gomp)
 
 
 install(TARGETS geometryindex RUNTIME DESTINATION bin)
