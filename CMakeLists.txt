@@ -25,23 +25,33 @@ link_directories(
 # -march=native to optimize even more (but the binary can not be used on another machine, or with valgrind).
 # -Wall to spot issues.
 # -fopenmp because (with gomp below) gives parallel algorithms before having c++17.
-add_definitions(-std=c++11 -O3 -Wall -fopenmp) #-march=native 
+add_definitions(-std=c++11 -O3 -Wall  -fopenmp -march=native)
 
 set (FILES_TO_COMPILE
-     Support.cpp
-     SupportTest.cpp
-     ReferenceSolution.cpp
-     ReferenceSolutionTest.cpp
-     GeometryIndex.cpp
-     GeometryIndexTest.cpp
-     CubeIndex.cpp
-     CubeIndexTest.cpp
-     PerfTest.cpp
+#     Support.cpp
+      BasicGeometryTest.cpp
+#     ReferenceSolution.cpp
+#     ReferenceSolutionTest.cpp
+#     GeometryIndex.cpp
+#     GeometryIndexTest.cpp
+#     CubeIndex.cpp
+#     CubeIndexTest.cpp
+#     PerfTest.cpp
      main.cpp
 )
 
+# Normal version of the thing built for maximum speed.
 add_executable(geometryindex ${FILES_TO_COMPILE})
 target_link_libraries(geometryindex ${GTEST_BOTH_LIBRARIES} pthread gomp)
+
+# This version has safety checks (overflow, exceptions on error...) inside.
+# The properly paranoid person should use this.
+# TODO: check if there is any performance effect.
+add_executable(geometryindex_checked ${FILES_TO_COMPILE})
+target_link_libraries(geometryindex_checked ${GTEST_BOTH_LIBRARIES} pthread gomp)
+target_compile_definitions(geometryindex_checked PRIVATE GEO_INDEX_SAFETY_CHECKS)
+
+# TODO: Parallel/normal targets (with/without gomp).
 
 
 install(TARGETS geometryindex RUNTIME DESTINATION bin)

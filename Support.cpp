@@ -29,7 +29,8 @@ double Distance(const Point& p1, const Point& p2) {
     xDistance * xDistance +
     yDistance * yDistance +
     zDistance * zDistance;
-  
+    
+
   return SafeSqrt(squaredDistance);
 }
 
