@@ -31,6 +31,8 @@ set (FILES_TO_COMPILE
       BasicGeometryTest.cpp
       NoIndexTest.cpp
       CommonTest.cpp
+      NearestNeighborsTest.cpp
+      DomainAssertions.cpp
 #     ReferenceSolution.cpp
 #     ReferenceSolutionTest.cpp
 #     GeometryIndex.cpp

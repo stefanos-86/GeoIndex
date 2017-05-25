@@ -56,9 +56,9 @@ public:
    * 
    *  TODO: try to make it better: take an iterator to a generic collection. Also in the other implementations. 
    *  TODO: break in sub-functions for clarity? */
-    void pointsWithin(const POINT& p, 
-                    const typename POINT::coordinate_t d,
-                    std::vector<IndexByDistance<POINT> >& output) const {
+    void pointsWithinDistance(const POINT& p, 
+                              const typename POINT::coordinate_t d,
+                              std::vector<IndexAndDistance<POINT> >& output) const {
     #ifdef GEO_INDEX_SAFETY_CHECKS
         if (d <= 0)
           throw std::runtime_error("NoIndex::pointsWithin Negative distance");
