@@ -28,8 +28,8 @@ link_directories(
 add_definitions(-std=c++11 -O3 -Wall  -fopenmp -march=native)
 
 set (FILES_TO_COMPILE
-#     Support.cpp
       BasicGeometryTest.cpp
+      NoIndexTest.cpp
 #     ReferenceSolution.cpp
 #     ReferenceSolutionTest.cpp
 #     GeometryIndex.cpp

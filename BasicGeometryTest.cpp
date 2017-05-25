@@ -8,10 +8,17 @@ namespace geoIndex {
 
 TEST(GenericPoint, anyType) {
   // This is here just to be sure the template instantiates.
-  GenericPoint<int> discreetPoint;
+  GenericPoint<int, long int> discreetPoint;
   discreetPoint.x = 0;
   ASSERT_EQ(0, discreetPoint.x); // Here just to avoid "variable defined but not used".
-}  
+}
+
+TEST(GenericPoint, FloatPoint) {
+  // This is here just to be sure the template instantiates.
+  FloatPoint withFloats{4.25, 23.3, 51};
+  withFloats.x = 0;
+  ASSERT_EQ(0, withFloats.x); // Here just to avoid "variable defined but not used".
+}
   
 
 TEST(SquaredDistance, samePoint) {

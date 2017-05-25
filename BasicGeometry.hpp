@@ -2,8 +2,11 @@
 #define GEOINDEX_BASIC_GEOMETRY
 
 #include <cstring>
-#include <stdexcept>
-#include <cmath>
+
+#ifdef GEO_INDEX_SAFETY_CHECKS
+  #include <stdexcept>
+  #include <cmath>
+#endif
 
 /** Basic types and elements that we need to make the algorithms and indexes run.
  * Most probably the client already has his/her own. Otherwise, he can use those and run
@@ -17,7 +20,7 @@ namespace geoIndex {
 
 /** Type used to "label" a point in space. It is its name.
  *   Must be a value type that can be used as a key for lookups and a std::vector position.
- *  An integrap type. */
+ *   An integer type. */
 typedef size_t PointIndex;
 
 /** The type used to define geometric coordinates (the, x, y, z in space).
@@ -26,20 +29,28 @@ typedef size_t PointIndex;
 typedef double Coordinate;
   
 /** Point in 3D space, as simple as it can be. 
- *  Must have x, y, z properties. */
-template<typename COORDINATE>
+ *  Must have x, y, z properties and have typenames for coordinate_t and index_t.
+ *  Does not store the index to keep the structure as compact as possible.
+ TODO: ...no lib in the world will have the two typedefs. How to make this generic??? Maybe a PointAdapter<real point type>???
+      Maybe I have to create a "type dictionary" with all the typedef, and separate the points elsewhere...???
+ */
+template<typename COORDINATE, typename INDEX>
 struct GenericPoint {
   typedef COORDINATE coordinate_t;
+  typedef INDEX index_t;
   COORDINATE x;
   COORDINATE y;
   COORDINATE z;
+  // Notice that we do not store the index. We only provide the type to ease
+  // writing client code (and be sure we find it again in functions that manipulates points
+  // without risks of mix-ups).
 };
 
 /** Default "ready to use" point. */
-typedef GenericPoint<Coordinate> Point;
+typedef GenericPoint<Coordinate, PointIndex> Point;
 
 /** Another type of point that we may see often. */
-typedef GenericPoint<float> FloatPoint;
+typedef GenericPoint<float, PointIndex> FloatPoint;
 
 
 /** Computes the square of the distance of two points. 
