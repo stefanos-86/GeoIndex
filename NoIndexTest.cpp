@@ -7,14 +7,18 @@
 #include <limits>
 
 #include "BasicGeometry.hpp"
+#include "Common.hpp"
 
 using namespace std;
 
 namespace geoIndex {
 
-template <typename COLLECTION, typename T>
-void ASSERT_PRESENT(const COLLECTION& c, const T element) {
-  ASSERT_NE(end(c), find(begin(c), end(c), element));
+void ASSERT_INDEX_PRESENT(const std::vector<IndexByDistance<Point>>& c, const Point::index_t pointIndex) {
+  ASSERT_NE(end(c), find_if(begin(c),
+                            end(c),
+                            [pointIndex](const IndexByDistance<Point>&c_i){
+                                return c_i.pointIndex == pointIndex;})
+           );
 }
   
 TEST(NoIndex, Construction_unknownSize) {
@@ -30,12 +34,12 @@ TEST(NoIndex, pointsWithin_samePoint) {
   const Point::index_t referenceIndex = 1;
   
   NoIndex<Point> redMesh(1);
-  redMesh.index(referencePoint, 1);
+  redMesh.index(referencePoint, referenceIndex);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 0.01, result);
   
-  ASSERT_PRESENT(result, referenceIndex);
+  ASSERT_INDEX_PRESENT(result, referenceIndex);
 }
 
 TEST(NoIndex, pointsWithin_coincidentPoints) {
@@ -45,11 +49,11 @@ TEST(NoIndex, pointsWithin_coincidentPoints) {
   redMesh.index(referencePoint, 1);
   redMesh.index(referencePoint, 2);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 0.01, result);
   
-  ASSERT_PRESENT(result, 1);
-  ASSERT_PRESENT(result, 2);
+  ASSERT_INDEX_PRESENT(result, 1);
+  ASSERT_INDEX_PRESENT(result, 2);
 }
 
 TEST(NoIndex, pointsWithin_noPoints) {
@@ -57,7 +61,7 @@ TEST(NoIndex, pointsWithin_noPoints) {
   
   NoIndex<Point> redMesh(2);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 0.01, result);
   
   ASSERT_TRUE(result.empty());
@@ -74,7 +78,7 @@ TEST(NoIndex, pointsWithin_onlyFarPoints) {
   redMesh.index(far2, 2);
   redMesh.index(far3, 3);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 0.01, result);
   
   ASSERT_TRUE(result.empty());
@@ -89,11 +93,11 @@ TEST(NoIndex, pointsWithin_inAndOutPoints) {
   redMesh.index(pIn, 1);
   redMesh.index(pOut, 2);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 101, result);
   
   ASSERT_EQ(1, result.size());
-  ASSERT_PRESENT(result, 1);
+  ASSERT_INDEX_PRESENT(result, 1);
 }
 
 TEST(NoIndex, pointsWithin_exactDistance) {
@@ -103,10 +107,33 @@ TEST(NoIndex, pointsWithin_exactDistance) {
   NoIndex<Point> redMesh(1);
   redMesh.index(onTheBorder, 1);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   redMesh.pointsWithin(referencePoint, 100, result);
   
   ASSERT_TRUE(result.empty());
+}
+
+TEST(NoIndex, pointsWithin_outputOrder) {
+  const Point referencePoint{0, 0, 0};
+  const Point closest{1, 0, 0};
+  const Point middle{2, 0, 0};
+  const Point far{3, 0, 0};
+  
+  const Point::index_t closestIndex = 1;
+  const Point::index_t middleIndex = 2;
+  const Point::index_t farIndex = 3;
+  
+  NoIndex<Point> redMesh(3);
+  redMesh.index(closest, closestIndex);
+  redMesh.index(far, farIndex);
+  redMesh.index(middle, middleIndex);
+  
+  std::vector<IndexByDistance<Point>> result;
+  redMesh.pointsWithin(referencePoint, 4, result);
+  
+  ASSERT_EQ(closestIndex, result.at(0).pointIndex);
+  ASSERT_EQ(middleIndex, result.at(1).pointIndex);
+  ASSERT_EQ(farIndex, result.at(2).pointIndex);
 }
 
 
@@ -128,7 +155,7 @@ TEST(NoIndex, pointsWithin_negativeDistance) {
   NoIndex<Point> redMesh(1);
   redMesh.index(referencePoint, index);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   
   ASSERT_ANY_THROW(redMesh.pointsWithin(referencePoint, -1, result););
 }
@@ -140,7 +167,7 @@ TEST(NoIndex, pointsWithin_zeroDistance) {
   NoIndex<Point> redMesh(1);
   redMesh.index(referencePoint, index);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   
   ASSERT_ANY_THROW(redMesh.pointsWithin(referencePoint, 0, result););
 }
@@ -152,7 +179,7 @@ TEST(NoIndex, pointsWithin_NanDistance) {
   NoIndex<Point> redMesh(1);
   redMesh.index(referencePoint, index);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   
   ASSERT_ANY_THROW(redMesh.pointsWithin(referencePoint, std::numeric_limits<double>::quiet_NaN(), result););
 }
@@ -164,7 +191,7 @@ TEST(NoIndex, pointsWithin_overflowDistance) {
   NoIndex<Point> redMesh(1);
   redMesh.index(referencePoint, index);
   
-  std::vector<Point::index_t> result;
+  std::vector<IndexByDistance<Point>> result;
   
   ASSERT_ANY_THROW(redMesh.pointsWithin(referencePoint, std::numeric_limits<double>::max(), result););
 }

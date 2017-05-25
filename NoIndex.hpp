@@ -2,11 +2,12 @@
 #define GEOINDEX_NO_INDEX
 
 #include <vector>
+#include <algorithm>
 
 #include "BasicGeometry.hpp"
+#include "Common.hpp"
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
-  #include <algorithm>
   #include <stdexcept>
   #include <cmath>
 #endif
@@ -38,44 +39,51 @@ public:
     indices.push_back(index);
   }
   
+  
   /** Does nothing, since this is not a real index.
    *  Kept to ensure it has the same interface as the others. */
   void completed() {};
   
+  
   /** Finds the points that are within distance d from p. Cleans the output vector before filling it.
    *  Returns the points sorted in distance order from p (to simplify computing the k-nearest-neighbor).
+   *  The returned structure also gives the squared distance. The client can do a sqrt and use it for its computations.
    * 
    *  And it does it with pure brute force: check p against all other points.
    *  This is the simplest possible algorithm.
    * 
    *  Returns only points strictly within the distance.
    * 
-   *  TODO: try to make it better: take an iterator to a generic collection. Also in the other implementations. */
-  void pointsWithin(const POINT& p, 
+   *  TODO: try to make it better: take an iterator to a generic collection. Also in the other implementations. 
+   *  TODO: break in sub-functions for clarity? */
+    void pointsWithin(const POINT& p, 
                     const typename POINT::coordinate_t d,
-                    std::vector<typename POINT::index_t>& output) const {
-#ifdef GEO_INDEX_SAFETY_CHECKS
-    if (d <= 0)
-      throw std::runtime_error("NoIndex::pointsWithin Negative distance");
-    if (std::isnan(d))
-      throw std::runtime_error("NoIndex::pointsWithin Invalid distance");
-#endif
+                    std::vector<IndexByDistance<POINT> >& output) const {
+    #ifdef GEO_INDEX_SAFETY_CHECKS
+        if (d <= 0)
+          throw std::runtime_error("NoIndex::pointsWithin Negative distance");
+        if (std::isnan(d))
+          throw std::runtime_error("NoIndex::pointsWithin Invalid distance");
+    #endif
                       
-        output.clear();
-        const typename Point::coordinate_t distanceLimit = d * d;  // Don't forget we use squared distances.
+    const typename Point::coordinate_t distanceLimit = d * d;  // Don't forget we use squared distances.
                                                                    // TODO: if we call this a lot of time, better have an overload that takes the square...
                                                                    
-#ifdef GEO_INDEX_SAFETY_CHECKS
-    if (std::isinf(distanceLimit))
-      throw std::runtime_error("NoIndex::pointsWithin Overflow");
-#endif
+    #ifdef GEO_INDEX_SAFETY_CHECKS
+        if (std::isinf(distanceLimit))
+          throw std::runtime_error("NoIndex::pointsWithin Overflow");
+    #endif
         
-        for (size_t i = 0; i < points.size(); ++i)
-          if (SquaredDistance(p, points[i]) < distanceLimit)
-            output.push_back(indices[i]);
-    
-                      
+    output.clear();
+    for (size_t i = 0; i < points.size(); ++i) {
+        const auto squaredDistance = SquaredDistance(p, points[i]);
+        if (squaredDistance < distanceLimit)
+            output.push_back({indices[i], squaredDistance});
     }
+    
+    std::sort(std::begin(output), std::end(output));
+    
+  }
                     
 private:
   // Internal data: parallel arrays.
