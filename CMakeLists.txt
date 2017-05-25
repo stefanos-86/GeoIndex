@@ -24,14 +24,15 @@ link_directories(
 # -O3 to optimize.
 # -march=native to optimize even more (but the binary can not be used on another machine, or with valgrind).
 # -Wall to spot issues.
-# -fopenmp because (with gomp below) gives parallel algorithms before having c++17.
-add_definitions(-std=c++11 -O3 -Wall  -fopenmp -march=native)
+# -fopenmp because (with gomp below) gives parallel algorithms before having c++17 (not used)
+add_definitions(-std=c++11 -O3 -Wall -march=native)
 
 set (FILES_TO_COMPILE
       BasicGeometryTest.cpp
       NoIndexTest.cpp
       CommonTest.cpp
       NearestNeighborsTest.cpp
+      AabbIndexTest.cpp
       DomainAssertions.cpp
 #     ReferenceSolution.cpp
 #     ReferenceSolutionTest.cpp
@@ -43,15 +44,21 @@ set (FILES_TO_COMPILE
      main.cpp
 )
 
+set (LIBRARIES_I_PILFERED 
+    ${GTEST_BOTH_LIBRARIES}
+    pthread
+    # gomp Only for parallel sort - not used now.
+)
+
 # Normal version of the thing built for maximum speed.
 add_executable(geometryindex ${FILES_TO_COMPILE})
-target_link_libraries(geometryindex ${GTEST_BOTH_LIBRARIES} pthread gomp)
+target_link_libraries(geometryindex ${LIBRARIES_I_PILFERED})
 
 # This version has safety checks (overflow, exceptions on error...) inside.
 # The properly paranoid person should use this.
 # TODO: check if there is any performance effect.
 add_executable(geometryindex_checked ${FILES_TO_COMPILE})
-target_link_libraries(geometryindex_checked ${GTEST_BOTH_LIBRARIES} pthread gomp)
+target_link_libraries(geometryindex_checked ${LIBRARIES_I_PILFERED})
 target_compile_definitions(geometryindex_checked PRIVATE GEO_INDEX_SAFETY_CHECKS)
 
 # TODO: Parallel/normal targets (with/without gomp).

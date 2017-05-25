@@ -16,7 +16,10 @@ namespace geoIndex {
 
 /** This index implementation... does not do any indexing. 
  *  It is just a collection of points. 
- TODO: do not forget to annotate the required methods in the function that uses the various indexes.*/
+ *
+ *  It offers no "smart" optimization to find the close points.
+ *  On the plus side, it can be modified after calling "completed" and still work.
+ */
 
 template <typename POINT>
 class NoIndex
@@ -60,18 +63,14 @@ public:
                               const typename POINT::coordinate_t d,
                               std::vector<IndexAndDistance<POINT> >& output) const {
     #ifdef GEO_INDEX_SAFETY_CHECKS
-        if (d <= 0)
-          throw std::runtime_error("NoIndex::pointsWithin Negative distance");
-        if (std::isnan(d))
-          throw std::runtime_error("NoIndex::pointsWithin Invalid distance");
+        CheckMeaningfulCullingDistance(d);
     #endif
                       
     const typename Point::coordinate_t distanceLimit = d * d;  // Don't forget we use squared distances.
                                                                    // TODO: if we call this a lot of time, better have an overload that takes the square...
                                                                    
     #ifdef GEO_INDEX_SAFETY_CHECKS
-        if (std::isinf(distanceLimit))
-          throw std::runtime_error("NoIndex::pointsWithin Overflow");
+        CheckOverflow(distanceLimit);
     #endif
         
     output.clear();

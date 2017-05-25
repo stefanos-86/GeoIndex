@@ -21,7 +21,8 @@ TEST(BuildIndex, NoIndex) {
     const Point testPoint({1, 2, 3});
     points.push_back(testPoint);
     
-    NoIndex<Point> indexToBuild;
+    NoIndex<Point> indexToBuild(points.size());  // The optimization parameter is irrelevant for the test,
+                                                 // but it shows the correct usage.
     BuildIndex(points, indexToBuild);
     
     std::vector<IndexAndDistance<Point> > readBackThePoint;
