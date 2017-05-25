@@ -43,6 +43,7 @@ public:
   void completed() {};
   
   /** Finds the points that are within distance d from p. Cleans the output vector before filling it.
+   *  Returns the points sorted in distance order from p (to simplify computing the k-nearest-neighbor).
    * 
    *  And it does it with pure brute force: check p against all other points.
    *  This is the simplest possible algorithm.

@@ -30,6 +30,7 @@ add_definitions(-std=c++11 -O3 -Wall  -fopenmp -march=native)
 set (FILES_TO_COMPILE
       BasicGeometryTest.cpp
       NoIndexTest.cpp
+      CommonTest.cpp
 #     ReferenceSolution.cpp
 #     ReferenceSolutionTest.cpp
 #     GeometryIndex.cpp

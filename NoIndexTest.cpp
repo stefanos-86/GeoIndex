@@ -109,13 +109,6 @@ TEST(NoIndex, pointsWithin_exactDistance) {
   ASSERT_TRUE(result.empty());
 }
 
-/*
-testare anche il caso di punti alla distanza esatta, subito dentro, subito fuori
-poi commit
-poi la generica funzione per il 2 neighbor
-poi fare gli altri tipi di indici
-poi test di performance in tutte le salse.
-*/
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(NoIndex, index_duplicatedIndex) {
