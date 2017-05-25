@@ -60,9 +60,9 @@ public:
      *   If the user forgets to call it he will get garbage results.
      */
     void completed() {
-        std::sort(std::begin(indexX), std::end(indexX));
-        std::sort(std::begin(indexY), std::end(indexY));
-        std::sort(std::begin(indexZ), std::end(indexZ));
+        std::sort(std::begin(indexX), std::end(indexX), SortByGeometry<POINT>);
+        std::sort(std::begin(indexY), std::end(indexY), SortByGeometry<POINT>);
+        std::sort(std::begin(indexZ), std::end(indexZ), SortByGeometry<POINT>);
         
         /* The latest STL (C++17) has a parallel sort that could be useful...
          * In the meanwhile, there is this nice thing from GNU.
@@ -99,9 +99,9 @@ public:
         candidatesOnDimension(indexZ, d, p.z, candidatesZ);
         
         // TODO: would it be faster with sets? 
-        std::sort(std::begin(candidatesX), std::end(candidatesX), SortByPointIndex);
-        std::sort(std::begin(candidatesY), std::end(candidatesY), SortByPointIndex);
-        std::sort(std::begin(candidatesZ), std::end(candidatesZ), SortByPointIndex);
+        std::sort(std::begin(candidatesX), std::end(candidatesX), SortByPointIndex<POINT>);
+        std::sort(std::begin(candidatesY), std::end(candidatesY), SortByPointIndex<POINT>);
+        std::sort(std::begin(candidatesZ), std::end(candidatesZ), SortByPointIndex<POINT>);
 
         
         
@@ -111,7 +111,7 @@ public:
                               std::begin(candidatesY),
                               std::end(candidatesY),
                               std::back_inserter(insideAabbXY),
-                              SortByPointIndex
+                              SortByPointIndex<POINT>
                              );
         
         std::vector<IndexAndCoordinate<POINT> > insideAabb;
@@ -120,7 +120,7 @@ public:
                               std::begin(candidatesZ),
                               std::end(candidatesZ),
                               std::back_inserter(insideAabb),
-                              SortByPointIndex
+                              SortByPointIndex<POINT>
                              );
         
         const typename POINT::coordinate_t referenceSquareDistance = d * d;
@@ -143,7 +143,7 @@ public:
         }
         
         // Don't forget we have to give the closests point first.
-        std::sort(std::begin(output), std::end(output));
+        std::sort(std::begin(output), std::end(output), SortByGeometry<POINT>);
     }
     
 private:
@@ -162,13 +162,7 @@ private:
                                       const typename POINT::index_t searchedValue) {
         return indexEntry.pointIndex < searchedValue;
     }
-    
-    static bool SortByPointIndex(const IndexAndCoordinate<POINT>& lhs,
-                                 const IndexAndCoordinate<POINT>& rhs)
-    {
-        return lhs.pointIndex < rhs.pointIndex;
-    }  
-    
+       
     /** Scan the given index and returns the indices of the "interesting" points.*/
     void candidatesOnDimension(const std::vector<IndexAndCoordinate<POINT> >& indexForDimension,
                                const typename POINT::coordinate_t searchDistance,

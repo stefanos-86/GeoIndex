@@ -12,7 +12,7 @@ namespace geoIndex {
 
 /** This file collects elements that are common to all the algorithms. */
 
-/** This struct is useful for sorting operations on points. 
+/** This struct is useful for sorting operations on points or coordinates or distances.... 
  *  It has no actual point inside to keep it as small as it can get. 
  *  The content is not constant to allow auto-generation of constructors, operators... (try to put const there!).
  */
@@ -22,21 +22,20 @@ struct IndexAndGeometry {
   typename POINT::coordinate_t geometricValue;
 };
 
-// TODO: replace with sort by geometry or sort by index. Find them in the AABB implementation.
+/** Helpers to sort and search. */
 template <typename POINT>
-inline bool operator< (const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ 
-return lhs.geometricValue < rhs.geometricValue; 
+static bool SortByPointIndex(const IndexAndGeometry<POINT>& lhs,
+                             const IndexAndGeometry<POINT>& rhs)
+{
+    return lhs.pointIndex < rhs.pointIndex;
 }
 
-/* Those are not really needed, but it is "polite" to give the whole set. */
 template <typename POINT>
-inline bool operator> (const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return rhs < lhs; }
-
-template <typename POINT>
-inline bool operator<=(const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return !(lhs > rhs); }
-
-template <typename POINT>
-inline bool operator>=(const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return !(lhs < rhs); }
+static bool SortByGeometry(const IndexAndGeometry<POINT>& lhs,
+                           const IndexAndGeometry<POINT>& rhs)
+{
+    return lhs.geometricValue < rhs.geometricValue;
+}  
 
 
 /** Alias from when we store the distance for a point to a reference. */

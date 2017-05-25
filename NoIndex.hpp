@@ -80,7 +80,7 @@ public:
             output.push_back({indices[i], squaredDistance});
     }
     
-    std::sort(std::begin(output), std::end(output));
+    std::sort(std::begin(output), std::end(output), SortByGeometry<POINT>);
     
   }
                     
