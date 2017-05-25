@@ -61,7 +61,7 @@ public:
    *  TODO: break in sub-functions for clarity? */
     void pointsWithinDistance(const POINT& p, 
                               const typename POINT::coordinate_t d,
-                              std::vector<IndexAndDistance<POINT> >& output) const {
+                              std::vector<IndexAndSquaredDistance<POINT> >& output) const {
     #ifdef GEO_INDEX_SAFETY_CHECKS
         CheckMeaningfulCullingDistance(d);
     #endif

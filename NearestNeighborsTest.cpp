@@ -25,7 +25,7 @@ TEST(BuildIndex, NoIndex) {
                                                  // but it shows the correct usage.
     BuildIndex(points, indexToBuild);
     
-    std::vector<IndexAndDistance<Point> > readBackThePoint;
+    std::vector<IndexAndSquaredDistance<Point> > readBackThePoint;
     indexToBuild.pointsWithinDistance(testPoint, 150, readBackThePoint);
     
     ASSERT_FALSE(readBackThePoint.empty());
@@ -34,7 +34,7 @@ TEST(BuildIndex, NoIndex) {
 
 /* Shortcuts some constant patameters*/
 static void TestKNearest_NoIndex(const std::vector<Point>& points,
-                                 std::vector<IndexAndDistance<Point> >& result 
+                                 std::vector<IndexAndSquaredDistance<Point> >& result 
 ) {
     NoIndex<Point> geometryIndex;
     BuildIndex(points, geometryIndex);
@@ -56,7 +56,7 @@ TEST(KNearestNeighbor, lessThanKPoints) {
     std::vector<Point> points;
     points.push_back(Point{0, 0, 0});
     
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     TestKNearest_NoIndex(points, result);
     
     ASSERT_EQ(1, result.size());
@@ -68,7 +68,7 @@ TEST(KNearestNeighbor, KPoints) {
     points.push_back(origin);
     points.push_back(origin);
     
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     TestKNearest_NoIndex(points, result);
     ASSERT_EQ(2, result.size());
 }
@@ -81,7 +81,7 @@ TEST(KNearestNeighbor, MoreThanKPoints) {
     points.push_back(origin);
     points.push_back(origin);
     
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     TestKNearest_NoIndex(points, result);
     ASSERT_EQ(2, result.size());
     
@@ -103,7 +103,7 @@ TEST(KNearestNeighbor, GenericCase) {
     const Point::coordinate_t cullingDistance = 65;
     
     const size_t k = 3;
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     
     KNearestNeighbor(
         points,
@@ -131,7 +131,7 @@ TEST(KNearestNeighbor, zeroDistance) {
     
     const Point referencePoint{0, 0, 0};
     const size_t k = 4;
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     
     
     ASSERT_ANY_THROW(
@@ -153,7 +153,7 @@ TEST(KNearestNeighbor, zeroK) {
     
     const Point referencePoint{0, 0, 0};
     const size_t k = 0;
-    std::vector<IndexAndDistance<Point> > result;
+    std::vector<IndexAndSquaredDistance<Point> > result;
     
     
     ASSERT_ANY_THROW(

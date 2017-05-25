@@ -43,7 +43,7 @@ public:
         #ifdef GEO_INDEX_SAFETY_CHECKS
             if (std::find_if(begin(indexX),
                              end(indexX),
-                             [index](const IndexAndDistance<POINT>& indexEntry) {
+                             [index](const IndexAndCoordinate<POINT>& indexEntry) {
                                 return indexEntry.pointIndex == index; }
                 ) != end(indexX))
                 throw std::runtime_error("Point indexed twice");
@@ -84,15 +84,15 @@ public:
     */
     void pointsWithinDistance(const POINT& p, 
                               const typename POINT::coordinate_t d,
-                              std::vector<IndexAndDistance<POINT> >& output) const 
+                              std::vector<IndexAndSquaredDistance<POINT> >& output) const 
     {
         #ifdef GEO_INDEX_SAFETY_CHECKS
             CheckMeaningfulCullingDistance(d);
         #endif
         
-        std::vector<IndexAndDistance<POINT> > candidatesX;
-        std::vector<IndexAndDistance<POINT> > candidatesY;
-        std::vector<IndexAndDistance<POINT> > candidatesZ;
+        std::vector<IndexAndCoordinate<POINT> > candidatesX;
+        std::vector<IndexAndCoordinate<POINT> > candidatesY;
+        std::vector<IndexAndCoordinate<POINT> > candidatesZ;
         
         candidatesOnDimension(indexX, d, p.x, candidatesX);
         candidatesOnDimension(indexY, d, p.y, candidatesY);
@@ -105,7 +105,7 @@ public:
 
         
         
-        std::vector<IndexAndDistance<POINT> > insideAabbXY;
+        std::vector<IndexAndCoordinate<POINT> > insideAabbXY;
         std::set_intersection(std::begin(candidatesX),
                               std::end(candidatesX),
                               std::begin(candidatesY),
@@ -114,7 +114,7 @@ public:
                               SortByPointIndex
                              );
         
-        std::vector<IndexAndDistance<POINT> > insideAabb;
+        std::vector<IndexAndCoordinate<POINT> > insideAabb;
         std::set_intersection(std::begin(insideAabbXY),
                               std::end(insideAabbXY),
                               std::begin(candidatesZ),
@@ -147,36 +147,33 @@ public:
     }
     
 private:
-// Blatant abuse!!! Should be IndexAndCoordinate! It is the same thing under a different name.
-// TODO rename the original thing into something generic. No point in copy-pasting a redefinition...
-//       Maybe make IndexAndDistance another typedef from a "generic" common thing.
-    std::vector<IndexAndDistance<POINT> > indexX;
-    std::vector<IndexAndDistance<POINT> > indexY;
-    std::vector<IndexAndDistance<POINT> > indexZ;
+    std::vector<IndexAndCoordinate<POINT> > indexX;
+    std::vector<IndexAndCoordinate<POINT> > indexY;
+    std::vector<IndexAndCoordinate<POINT> > indexZ;
   
    
     
-    static bool CompareEntryWithCoordinate(const IndexAndDistance<POINT>& indexEntry,
+    static bool CompareEntryWithCoordinate(const IndexAndCoordinate<POINT>& indexEntry,
                                            const typename POINT::coordinate_t searchedValue) {
-        return indexEntry.squaredDistance < searchedValue;  // TODO! THIS IS AWFUL squaredDistance... does not contain a squaredDistance!
+        return indexEntry.geometricValue < searchedValue;
     }
     
-    static bool CompareEntryWithIndex(const IndexAndDistance<POINT>& indexEntry,
+    static bool CompareEntryWithIndex(const IndexAndCoordinate<POINT>& indexEntry,
                                       const typename POINT::index_t searchedValue) {
         return indexEntry.pointIndex < searchedValue;
     }
     
-    static bool SortByPointIndex(const IndexAndDistance<POINT>& lhs,
-                                 const IndexAndDistance<POINT>& rhs)
+    static bool SortByPointIndex(const IndexAndCoordinate<POINT>& lhs,
+                                 const IndexAndCoordinate<POINT>& rhs)
     {
         return lhs.pointIndex < rhs.pointIndex;
     }  
     
-    /** Scan the given index and returns the indices of the "interesting" points.*/  // TODO: point index must change name...
-    void candidatesOnDimension(const std::vector<IndexAndDistance<POINT> >& indexForDimension,
+    /** Scan the given index and returns the indices of the "interesting" points.*/
+    void candidatesOnDimension(const std::vector<IndexAndCoordinate<POINT> >& indexForDimension,
                                const typename POINT::coordinate_t searchDistance,
                                const typename POINT::coordinate_t referenceCoordnate,
-                               std::vector<IndexAndDistance<POINT> >& candidates) const 
+                               std::vector<IndexAndCoordinate<POINT> >& candidates) const 
     {
         const typename POINT::coordinate_t minAcceptedCoordinate = referenceCoordnate - searchDistance;
         const typename POINT::coordinate_t maxAcceptedCoordinate = referenceCoordnate + searchDistance;
@@ -203,14 +200,14 @@ private:
       * to avoid this kind of issues - or maybe we should move the distance test outside the indexes). 
       * Assume that groupOfCandidates is sorted by point index and point indices do not repeat. */
     typename POINT::coordinate_t findCoordinateOf(const typename POINT::index_t pointIndex,
-                                                  const std::vector<IndexAndDistance<POINT> >& groupOfCandidates) const
+                                                  const std::vector<IndexAndCoordinate<POINT> >& groupOfCandidates) const
     {
         const auto indexEntry = std::lower_bound(std::begin(groupOfCandidates),
                                                  std::end(groupOfCandidates),
                                                  pointIndex,
                                                  CompareEntryWithIndex);
         
-        return indexEntry->squaredDistance;  //TODO: NOT a distance!
+        return indexEntry->geometricValue;
         
     }
     

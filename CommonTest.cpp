@@ -9,9 +9,9 @@
 
 namespace geoIndex {
   
-TEST(IndexAndDistance, operators) {
-  const IndexAndDistance<Point> big{4, 10000000};
-  const IndexAndDistance<Point> small{4, 0.00001};
+TEST(IndexAndGeometry, operators) {
+  const IndexAndGeometry<Point> big{4, 10000000};
+  const IndexAndGeometry<Point> small{4, 0.00001};
   
   ASSERT_GT(big, small);
   ASSERT_LT(small, big);
@@ -20,12 +20,12 @@ TEST(IndexAndDistance, operators) {
   ASSERT_GE(small, small);
 }
   
-TEST(IndexAndDistance, sort) {
-  const IndexAndDistance<Point> first{4, 1.0};  // Index intentioally out of order, to ensure sorting is on distance.
-  const IndexAndDistance<Point> second{56, 2.0};
-  const IndexAndDistance<Point> third{2, 3.0};
+TEST(IndexAndGeometry, sort) {
+  const IndexAndGeometry<Point> first{4, 1.0};  // Index intentioally out of order, to ensure sorting is on distance.
+  const IndexAndGeometry<Point> second{56, 2.0};
+  const IndexAndGeometry<Point> third{2, 3.0};
   
-  std::vector<IndexAndDistance<Point> > pointsToSort;
+  std::vector<IndexAndGeometry<Point> > pointsToSort;
   pointsToSort.push_back(third);
   pointsToSort.push_back(second);
   pointsToSort.push_back(first);

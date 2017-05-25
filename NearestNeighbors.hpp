@@ -46,7 +46,7 @@ void KNearestNeighbor(
     const typename POINT::coordinate_t cullingDistance,
     const POINT& referencePoint,
     const size_t k,
-    typename std::vector<IndexAndDistance<POINT> >& output
+    typename std::vector<IndexAndSquaredDistance<POINT> >& output
     ) {
     
     #ifdef GEO_INDEX_SAFETY_CHECKS

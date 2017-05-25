@@ -7,10 +7,10 @@ using namespace std;
 
 namespace geoIndex {
 
-void ASSERT_INDEX_PRESENT(const std::vector<IndexAndDistance<Point>>& result, const Point::index_t pointIndex) {
+void ASSERT_INDEX_PRESENT(const std::vector<IndexAndGeometry<Point>>& result, const Point::index_t pointIndex) {
   ASSERT_NE(end(result), find_if(begin(result),
                             end(result),
-                            [pointIndex](const IndexAndDistance<Point>&result_i){
+                            [pointIndex](const IndexAndGeometry<Point>&result_i){
                                 return result_i.pointIndex == pointIndex;})
            );
 }

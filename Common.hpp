@@ -17,25 +17,35 @@ namespace geoIndex {
  *  The content is not constant to allow auto-generation of constructors, operators... (try to put const there!).
  */
 template <typename POINT>
-struct IndexAndDistance {
+struct IndexAndGeometry {
   typename POINT::index_t pointIndex;
-  typename POINT::coordinate_t squaredDistance;
+  typename POINT::coordinate_t geometricValue;
 };
 
+// TODO: replace with sort by geometry or sort by index. Find them in the AABB implementation.
 template <typename POINT>
-inline bool operator< (const IndexAndDistance<POINT>& lhs, const IndexAndDistance<POINT>& rhs){ 
-return lhs.squaredDistance < rhs.squaredDistance; 
+inline bool operator< (const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ 
+return lhs.geometricValue < rhs.geometricValue; 
 }
 
 /* Those are not really needed, but it is "polite" to give the whole set. */
 template <typename POINT>
-inline bool operator> (const IndexAndDistance<POINT>& lhs, const IndexAndDistance<POINT>& rhs){ return rhs < lhs; }
+inline bool operator> (const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return rhs < lhs; }
 
 template <typename POINT>
-inline bool operator<=(const IndexAndDistance<POINT>& lhs, const IndexAndDistance<POINT>& rhs){ return !(lhs > rhs); }
+inline bool operator<=(const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return !(lhs > rhs); }
 
 template <typename POINT>
-inline bool operator>=(const IndexAndDistance<POINT>& lhs, const IndexAndDistance<POINT>& rhs){ return !(lhs < rhs); }
+inline bool operator>=(const IndexAndGeometry<POINT>& lhs, const IndexAndGeometry<POINT>& rhs){ return !(lhs < rhs); }
+
+
+/** Alias from when we store the distance for a point to a reference. */
+template <typename POINT>
+using IndexAndSquaredDistance = IndexAndGeometry<POINT>;
+
+/** Alias to store coordinates. */
+template <typename POINT>
+using IndexAndCoordinate = IndexAndGeometry<POINT>;
 
 //TODO: test the stuff here directly.
 #ifdef GEO_INDEX_SAFETY_CHECKS
