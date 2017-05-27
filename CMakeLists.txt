@@ -34,12 +34,7 @@ set (FILES_TO_COMPILE
       NearestNeighborsTest.cpp
       AabbIndexTest.cpp
       DomainAssertions.cpp
-#     ReferenceSolution.cpp
-#     ReferenceSolutionTest.cpp
-#     GeometryIndex.cpp
-#     GeometryIndexTest.cpp
-#     CubeIndex.cpp
-#     CubeIndexTest.cpp
+      CubeIndexTest.cpp
 #     PerfTest.cpp
      main.cpp
 )

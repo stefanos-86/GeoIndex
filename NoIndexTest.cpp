@@ -2,14 +2,7 @@
 
 #include "NoIndex.hpp"
 
-
-#include <vector>
-#include <limits>
-
-#include "BasicGeometry.hpp"
 #include "Common.hpp"
-#include "DomainAssertions.hpp"
-
 #include "TestsForAllIndexes.hpp"
 
 using namespace std;

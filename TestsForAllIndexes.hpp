@@ -20,7 +20,7 @@ void pointsWithinDistance_samePoint() {
   const Point referencePoint{1, 55, 2};
   const Point::index_t referenceIndex = 1;
   
-  GEOMETRY_INDEX redMesh(1);
+  GEOMETRY_INDEX redMesh(1);  // Red mesh: in the original problem statemet we had two meshes. The one to search into was "red".
   redMesh.index(referencePoint, referenceIndex);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
