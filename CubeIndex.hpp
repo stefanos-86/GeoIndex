@@ -113,11 +113,25 @@ public:
         * Then we take cubes that are d on both sides.
         * The +1 guarantees that we "comfortably exceed" the distance, to compensate for truncated decimals */
         const CubicCoordinate dAsNumberOfCubes = static_cast<CubicCoordinate>(d / gridStep);
-        const CubicCoordinate scanDistance = dAsNumberOfCubes + 1;
+        
+        #ifdef GEO_INDEX_SAFETY_CHECKS  // Checking ALL the math makes things too messy.
+            StopSumOverflow<CubicCoordinate>(dAsNumberOfCubes, 1);
+        #endif   
+        
+        const CubicCoordinate scanDistance = dAsNumberOfCubes + static_cast<CubicCoordinate>(1);
     
         // Scan all the cubes around the one that contains the reference point.
         std::vector<typename POINT::index_t> indicesOfCandidates;
-        // TODO: under/overflow if cubic coordinates
+       
+        #ifdef GEO_INDEX_SAFETY_CHECKS
+            StopSumOverflow<CubicCoordinate>(iReference, scanDistance);
+            StopSumOverflow<CubicCoordinate>(jReference, scanDistance);
+            StopSumOverflow<CubicCoordinate>(kReference, scanDistance);
+            StopDifferenceUnderflow<CubicCoordinate>(iReference, scanDistance);
+            StopDifferenceUnderflow<CubicCoordinate>(jReference, scanDistance);
+            StopDifferenceUnderflow<CubicCoordinate>(kReference, scanDistance);
+        #endif   
+        
         for (CubicCoordinate i = iReference - scanDistance; i <= iReference + scanDistance; i++)
             for (CubicCoordinate j = jReference - scanDistance; j <= jReference + scanDistance; j++)
                 for (CubicCoordinate k = kReference - scanDistance; k <= kReference + scanDistance; k++) {

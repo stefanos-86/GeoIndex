@@ -105,17 +105,30 @@ TEST(CubeCollection, readFromUnmappedCube) {
     ASSERT_EQ(std::vector<Point::index_t>{}, cc.read(0, 1, 2));
 }
 
-/* TODO: double check!
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(CubeIndex, index_cubicCoordinateOverflow) {
     const double probablyBiggerThanCubicCoordinate = static_cast<double>(std::numeric_limits<CubicCoordinate>::max()) + 1.0;
-    CubeIndex<Point> cu;
+    CubeIndex<Point> cu(0.1); // This pushes things farther.
     ASSERT_ANY_THROW(cu.index(Point{probablyBiggerThanCubicCoordinate, 1.0, 1},  1));
+}
+
+TEST(CubeIndex, pointsWithinDistance_scanDistanceOverflow) {
+    const double limitOfCoordinates = static_cast<double>(std::numeric_limits<CubicCoordinate>::max());
+    CubeIndex<Point> cu(1);
+    std::vector<IndexAndSquaredDistance<Point> > output;
+    ASSERT_ANY_THROW(cu.pointsWithinDistance(Point{0, 0, 0}, limitOfCoordinates, output));
+}
+
+TEST(CubeIndex, pointsWithinDistance_scanPlusReference) {
+    const double referenceCloseToLimit = static_cast<double>(std::numeric_limits<CubicCoordinate>::max() - 10);
+    CubeIndex<Point> cu(1);
+    std::vector<IndexAndSquaredDistance<Point> > output;
+    ASSERT_ANY_THROW(cu.pointsWithinDistance(Point{referenceCloseToLimit, 0, 0}, 20, output));
 }
 
 // TODO: Limit cases with points near the cube limits.
 // TODO: different cube steps, different distance with respect to the cubes, idiotic cube sizes.
 
-#endif*/
+#endif
 
 }

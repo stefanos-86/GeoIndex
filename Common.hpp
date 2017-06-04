@@ -4,8 +4,9 @@
 #include <vector>
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
-  #include <stdexcept>
-  #include <cmath>
+    #include <stdexcept>
+    #include <cmath>
+    #include<limits>
 #endif
 
 namespace geoIndex {
@@ -62,6 +63,26 @@ void CheckMeaningfulCullingDistance(const DISTANCE_TYPE d) {
     if (std::isnan(d))
         throw std::runtime_error("Invalid distance");
 }  
+
+/** Throws if a + b would go over the maximum. 
+  * We are solidly in "best quick and dirty effort" territory. This probably has holes,
+  * but may still help to smoke out bugs. */
+template <typename T>
+void StopSumOverflow(const T a, const T b) {
+    if (std::numeric_limits<T>::max() - a < b)
+        throw std::runtime_error("Sum about to overflow.");
+    
+}
+
+/** Throws if a - b would go below the minimum.
+  * We are solidly in "best quick and dirty effort" territory. This probably has holes,
+  * but may still help to smoke out bugs. */
+template <typename T>
+void StopDifferenceUnderflow(const T a, const T b) {
+    if (a < std::numeric_limits<T>::min() + b)
+        throw std::runtime_error("Difference about to underflow.");
+    
+}
 #endif
 
 
