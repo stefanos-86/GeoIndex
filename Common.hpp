@@ -47,7 +47,6 @@ using IndexAndSquaredDistance = IndexAndGeometry<POINT>;
 template <typename POINT>
 using IndexAndCoordinate = IndexAndGeometry<POINT>;
 
-//TODO: test the stuff here directly.
 #ifdef GEO_INDEX_SAFETY_CHECKS
 
 template <typename POINT_COORDINATE>

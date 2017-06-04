@@ -46,12 +46,25 @@ TEST(IndexAndGeometry, SortByPointIndex) {
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(CheckOverflow, NoOverflow) {
-    CheckOverflow<double>(29);
+    ASSERT_NO_THROW(CheckOverflow<double>(29));
 }
 
 TEST(CheckOverflow, Overflow) {
-    CheckOverflow<double>(1.0 / 0.0);
+    ASSERT_ANY_THROW(CheckOverflow<double>(1.0 / 0.0));
 }
+
+TEST(CheckMeaningfulCullingDistance, correct) {
+    ASSERT_NO_THROW(CheckMeaningfulCullingDistance<float>(29));
+}
+
+TEST(CheckMeaningfulCullingDistance, notADistance) {
+    ASSERT_ANY_THROW(CheckMeaningfulCullingDistance<float>(-29));
+}
+
+TEST(CheckMeaningfulCullingDistance, insane) {
+    ASSERT_ANY_THROW(CheckMeaningfulCullingDistance<float>(0.0 / 0.0));
+}
+
 
 TEST(StopSumOverflow, NoOverflow) {
     ASSERT_NO_THROW(StopSumOverflow<int>(1, 1));
