@@ -8,6 +8,8 @@
 #include "Common.hpp"
 
 #include "NoIndex.hpp"
+#include "AabbIndex.hpp"
+#include "CubeIndex.hpp"
 
 #include "DomainAssertions.hpp"
 
@@ -23,6 +25,37 @@ TEST(BuildIndex, NoIndex) {
     
     NoIndex<Point> indexToBuild(points.size());  // The optimization parameter is irrelevant for the test,
                                                  // but it shows the correct usage.
+    BuildIndex(points, indexToBuild);
+    
+    std::vector<IndexAndSquaredDistance<Point> > readBackThePoint;
+    indexToBuild.pointsWithinDistance(testPoint, 150, readBackThePoint);
+    
+    ASSERT_FALSE(readBackThePoint.empty());
+}
+
+
+TEST(BuildIndex, AabbIndex) {
+    std::vector<Point> points;
+    const Point testPoint({1, 2, 3});
+    points.push_back(testPoint);
+    
+    AabbIndex<Point> indexToBuild(points.size());  // The optimization parameter is irrelevant for the test,
+                                                   // but it shows the correct usage.
+    BuildIndex(points, indexToBuild);
+    
+    std::vector<IndexAndSquaredDistance<Point> > readBackThePoint;
+    indexToBuild.pointsWithinDistance(testPoint, 150, readBackThePoint);
+    
+    ASSERT_FALSE(readBackThePoint.empty());
+}
+
+TEST(BuildIndex, CubeIndex) {
+    std::vector<Point> points;
+    const Point testPoint({1, 2, 3});
+    points.push_back(testPoint);
+    
+    CubeIndex<Point> indexToBuild(10.0);  // The optimization parameter is irrelevant for the test,
+                                          // but it shows the correct usage.
     BuildIndex(points, indexToBuild);
     
     std::vector<IndexAndSquaredDistance<Point> > readBackThePoint;
