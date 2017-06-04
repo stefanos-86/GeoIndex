@@ -75,11 +75,9 @@ namespace geoIndex {
 template <typename POINT>
 class CubeIndex {
 public:
-    /** It is better to use the other constructor!
-     * Completely ignore the parameter.
-      TODO: people will use ints in the constructor and so I can't do an overload with POINT::coordinate_t Pass to a named param idiom?*/
-    CubeIndex(const size_t expectedCollectionSize = 0) :
-        gridStep(100)  // TODO: check what happens when this is 1 -> one test fails. Plus, should be "tweakable".
+    /** Creates an index that divides the space in cubes of the given side size. */
+    CubeIndex(typename Point::coordinate_t cubeSide) :
+        gridStep(cubeSide)
     {}
 
     /** Adds a point to the index. Remember its name too. */
@@ -94,6 +92,7 @@ public:
                      spaceToCubic(p.z),
                      index);
         points[index] = p;
+        
     }
     
     /** Does nothing. This index does not require any "pre-processing" and can be used after indexing "new" points. */
@@ -111,10 +110,10 @@ public:
         const CubicCoordinate kReference = spaceToCubic(p.z);
         
         /* We must take the points in all the cubes that are closer than d to the reference.
-        * Then we take cubes that are d/2 on both sides (think of a bigger cube of side d).
+        * Then we take cubes that are d on both sides.
         * The +1 guarantees that we "comfortably exceed" the distance, to compensate for truncated decimals */
         const CubicCoordinate dAsNumberOfCubes = static_cast<CubicCoordinate>(d / gridStep);
-        const CubicCoordinate scanDistance = dAsNumberOfCubes / 2 + 1;
+        const CubicCoordinate scanDistance = dAsNumberOfCubes + 1;
     
         // Scan all the cubes around the one that contains the reference point.
         std::vector<typename POINT::index_t> indicesOfCandidates;
