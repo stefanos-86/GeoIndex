@@ -3,64 +3,79 @@
 #include "CubeIndex.hpp"
 
 #include <vector>
-
+#include <limits>
 #include "Common.hpp"
 #include "TestsForAllIndexes.hpp"
 
 using namespace std;
 
 namespace geoIndex {
-  
+
+static const Point::coordinate_t gridStep = 10.0; // More to illustrate how to use it than other reasons.
 
 TEST(CubeIndex, pointsWithinDistance_samePoint) {
-    pointsWithinDistance_samePoint<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_samePoint(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_coincidentPoints) {
-    pointsWithinDistance_coincidentPoints<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_coincidentPoints(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_noPoints) {
-  pointsWithinDistance_noPoints<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_noPoints(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_onlyFarPoints) {
-    pointsWithinDistance_onlyFarPoints<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_onlyFarPoints(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_inAndOutPoints) {
-    pointsWithinDistance_inAndOutPoints<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_inAndOutPoints(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_exactDistance) {
-    pointsWithinDistance_exactDistance<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_exactDistance(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_outputOrder) {
-    pointsWithinDistance_outputOrder<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_outputOrder(index);
 }
 
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(CubeIndex, index_duplicatedIndex) {
-  index_duplicatedIndex<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    index_duplicatedIndex(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_negativeDistance) {
-    pointsWithinDistance_negativeDistance<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_negativeDistance(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_zeroDistance) {
-    pointsWithinDistance_zeroDistance<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_zeroDistance(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_NanDistance) {
-    pointsWithinDistance_NanDistance<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_NanDistance(index);
 }
 
 TEST(CubeIndex, pointsWithinDistance_overflowDistance) {
-    pointsWithinDistance_overflowDistance<CubeIndex<Point>>();
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_overflowDistance(index);
 }
+
+#endif
 
 
 /* Specific tests for this implementation. */
@@ -90,9 +105,17 @@ TEST(CubeCollection, readFromUnmappedCube) {
     ASSERT_EQ(std::vector<Point::index_t>{}, cc.read(0, 1, 2));
 }
 
-// TODO: Limit cases with points near the cube limits.
-// TODO: different cube steps, different distance with respect to the cubes.
+/* TODO: double check!
+#ifdef GEO_INDEX_SAFETY_CHECKS
+TEST(CubeIndex, index_cubicCoordinateOverflow) {
+    const double probablyBiggerThanCubicCoordinate = static_cast<double>(std::numeric_limits<CubicCoordinate>::max()) + 1.0;
+    CubeIndex<Point> cu;
+    ASSERT_ANY_THROW(cu.index(Point{probablyBiggerThanCubicCoordinate, 1.0, 1},  1));
+}
 
-#endif
+// TODO: Limit cases with points near the cube limits.
+// TODO: different cube steps, different distance with respect to the cubes, idiotic cube sizes.
+
+#endif*/
 
 }

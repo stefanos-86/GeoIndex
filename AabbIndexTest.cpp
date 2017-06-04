@@ -5,55 +5,69 @@
 #include "TestsForAllIndexes.hpp"
 
 namespace geoIndex {
+
+static const int expectedIndexSize = 5; // Anything would do. We don't care about performance here.
     
 TEST(AabbIndex, pointsWithinDistance_samePoint) {
-    pointsWithinDistance_samePoint<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_samePoint(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_coincidentPoints) {
-    pointsWithinDistance_coincidentPoints<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_coincidentPoints(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_noPoints) {
-  pointsWithinDistance_noPoints<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_noPoints(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_onlyFarPoints) {
-    pointsWithinDistance_onlyFarPoints<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_onlyFarPoints(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_inAndOutPoints) {
-    pointsWithinDistance_inAndOutPoints<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_inAndOutPoints(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_exactDistance) {
-    pointsWithinDistance_exactDistance<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_exactDistance(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_outputOrder) {
-    pointsWithinDistance_outputOrder<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_outputOrder(index);
 }
 
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(AabbIndex, index_duplicatedIndex) {
-  index_duplicatedIndex<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    index_duplicatedIndex(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_negativeDistance) {
-    pointsWithinDistance_negativeDistance<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_negativeDistance(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_zeroDistance) {
-    pointsWithinDistance_zeroDistance<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_zeroDistance(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_NanDistance) {
-    pointsWithinDistance_NanDistance<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_NanDistance(index);
 }
 
 TEST(AabbIndex, pointsWithinDistance_overflowDistance) {
-    pointsWithinDistance_overflowDistance<AabbIndex<Point>>();
+    AabbIndex<Point> index(expectedIndexSize);
+    pointsWithinDistance_overflowDistance(index);
 }
 
 //TODO: test che chiamano i lookup prima di chiudere l'indice o lo modificano dopo. >> ci deve essere un warning...

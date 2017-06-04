@@ -4,9 +4,14 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Common.hpp"
 #include "BasicGeometry.hpp"
+
+#ifdef GEO_INDEX_SAFETY_CHECKS
+    #include <limits>
+#endif
 
 namespace geoIndex {
   
@@ -70,10 +75,11 @@ namespace geoIndex {
 template <typename POINT>
 class CubeIndex {
 public:
-    /** It is better to use the other constructor! TODO! Make it...
-     * Completely ignore the parameters. Must have the constructor to match the other indexes. */
+    /** It is better to use the other constructor!
+     * Completely ignore the parameter.
+      TODO: people will use ints in the constructor and so I can't do an overload with POINT::coordinate_t Pass to a named param idiom?*/
     CubeIndex(const size_t expectedCollectionSize = 0) :
-        gridStep(100)
+        gridStep(100)  // TODO: check what happens when this is 1 -> one test fails. Plus, should be "tweakable".
     {}
 
     /** Adds a point to the index. Remember its name too. */
@@ -150,12 +156,19 @@ private:
     
     /** To convert from the x, y, z coordinates of points to the discreet coordinates of cubes. 
      *  The cubes divide the space in a uniform 3D grid, so finding the relevant cube is easy. Decimals are truncated
-     *  (imagine the cubes aligned on integer coordinates in the grid reference system). */
-    CubicCoordinate spaceToCubic(const double coordinate) const 
+     *  (imagine the cubes aligned on integer coordinates in the grid reference system). 
+     *
+     *  Assume implicitely that coordinates are expressed in some "big" type, like double, that may have
+     *  bigger values that the integer used for CubicCoordinate. */
+    CubicCoordinate spaceToCubic(const typename POINT::coordinate_t coordinate) const 
     {
         // Finds the cube and truncates decimal in single to.
-        //TODO: check overflow
-        return static_cast<CubicCoordinate>(coordinate / gridStep);
+        const typename POINT::coordinate_t beforeTruncation = coordinate / gridStep;
+        #ifdef GEO_INDEX_SAFETY_CHECKS
+            if (beforeTruncation > std::numeric_limits<CubicCoordinate>::max())
+                throw std::runtime_error("Cubic coordinate overflow");
+        #endif
+        return static_cast<CubicCoordinate>(beforeTruncation);
     }
 };
 

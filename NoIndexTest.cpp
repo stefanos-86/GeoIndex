@@ -11,53 +11,65 @@ namespace geoIndex {
 
 
 TEST(NoIndex, pointsWithinDistance_samePoint) {
-    pointsWithinDistance_samePoint<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_samePoint(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_coincidentPoints) {
-    pointsWithinDistance_coincidentPoints<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_coincidentPoints(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_noPoints) {
-  pointsWithinDistance_noPoints<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_noPoints(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_onlyFarPoints) {
-    pointsWithinDistance_onlyFarPoints<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_onlyFarPoints(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_inAndOutPoints) {
-    pointsWithinDistance_inAndOutPoints<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_inAndOutPoints(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_exactDistance) {
-    pointsWithinDistance_exactDistance<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_exactDistance(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_outputOrder) {
-    pointsWithinDistance_outputOrder<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_outputOrder(index);
 }
 
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(NoIndex, index_duplicatedIndex) {
-  index_duplicatedIndex<NoIndex<Point>>();
+    NoIndex<Point> index;
+    index_duplicatedIndex(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_negativeDistance) {
-    pointsWithinDistance_negativeDistance<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_negativeDistance(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_zeroDistance) {
-    pointsWithinDistance_zeroDistance<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_zeroDistance(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_NanDistance) {
-    pointsWithinDistance_NanDistance<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_NanDistance(index);
 }
 
 TEST(NoIndex, pointsWithinDistance_overflowDistance) {
-    pointsWithinDistance_overflowDistance<NoIndex<Point>>();
+    NoIndex<Point> index;
+    pointsWithinDistance_overflowDistance(index);
 }
 
 #endif

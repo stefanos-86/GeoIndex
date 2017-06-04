@@ -12,15 +12,16 @@ namespace geoIndex {
  *  There is no point in duplicating them. Those are the "invariants" that all indexes must respect.
  *
  *  Simply pass each implementation as a parameter and then re-use for the specific tests. 
+ *  
+ *  Red mesh: in the original problem statemet we had two meshes. The one to search into was "red".
  */
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_samePoint() {
+void pointsWithinDistance_samePoint(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t referenceIndex = 1;
   
-  GEOMETRY_INDEX redMesh(1);  // Red mesh: in the original problem statemet we had two meshes. The one to search into was "red".
   redMesh.index(referencePoint, referenceIndex);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
@@ -31,10 +32,9 @@ void pointsWithinDistance_samePoint() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_coincidentPoints() {
+void pointsWithinDistance_coincidentPoints(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   
-  GEOMETRY_INDEX redMesh(2);
   redMesh.index(referencePoint, 1);
   redMesh.index(referencePoint, 2);
   
@@ -47,10 +47,8 @@ void pointsWithinDistance_coincidentPoints() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_noPoints() {
+void pointsWithinDistance_noPoints(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{0, 0, 0};
-  
-  GEOMETRY_INDEX redMesh(2);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 0.01, result);
@@ -60,13 +58,12 @@ void pointsWithinDistance_noPoints() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_onlyFarPoints() {
+void pointsWithinDistance_onlyFarPoints(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{0, 0, 0};
   const Point far1{100, 0, 0};
   const Point far2{154, 5, 0};
   const Point far3{100, 0, 256};
   
-  GEOMETRY_INDEX redMesh(3);
   redMesh.index(far1, 1);
   redMesh.index(far2, 2);
   redMesh.index(far3, 3);
@@ -79,12 +76,11 @@ void pointsWithinDistance_onlyFarPoints() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_inAndOutPoints() {
+void pointsWithinDistance_inAndOutPoints(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{0, 0, 0};
   const Point pIn{99.99, 0, 0};
   const Point pOut{101.1, 0, 0};
   
-  GEOMETRY_INDEX redMesh(2);
   redMesh.index(pIn, 1);
   redMesh.index(pOut, 2);
   
@@ -97,11 +93,10 @@ void pointsWithinDistance_inAndOutPoints() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_exactDistance() {
+void pointsWithinDistance_exactDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{0, 0, 0};
   const Point onTheBorder{100, 0, 0};
   
-  GEOMETRY_INDEX redMesh(1);
   redMesh.index(onTheBorder, 1);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
@@ -112,7 +107,7 @@ void pointsWithinDistance_exactDistance() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_outputOrder() {
+void pointsWithinDistance_outputOrder(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{0, 0, 0};
   const Point closest{1, 0, 0};
   const Point middle{2, 0, 0};
@@ -122,7 +117,6 @@ void pointsWithinDistance_outputOrder() {
   const Point::index_t middleIndex = 2;
   const Point::index_t farIndex = 3;
   
-  GEOMETRY_INDEX redMesh(3);
   redMesh.index(closest, closestIndex);
   redMesh.index(far, farIndex);
   redMesh.index(middle, middleIndex);
@@ -136,14 +130,12 @@ void pointsWithinDistance_outputOrder() {
 }
 
 
-
-/* Safety checks */
+/* Safety checks.*/
 template <typename GEOMETRY_INDEX>
-void index_duplicatedIndex() {
+void index_duplicatedIndex(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t sameIndex = 1;
   
-  GEOMETRY_INDEX redMesh(2);
   redMesh.index(referencePoint, sameIndex);
   
   ASSERT_ANY_THROW(redMesh.index(referencePoint, sameIndex));
@@ -151,11 +143,10 @@ void index_duplicatedIndex() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_negativeDistance() {
+void pointsWithinDistance_negativeDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t index = 1;
   
-  GEOMETRY_INDEX redMesh(1);
   redMesh.index(referencePoint, index);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
@@ -165,11 +156,10 @@ void pointsWithinDistance_negativeDistance() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_zeroDistance() {
+void pointsWithinDistance_zeroDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t index = 1;
   
-  GEOMETRY_INDEX redMesh(1);
   redMesh.index(referencePoint, index);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
@@ -179,11 +169,10 @@ void pointsWithinDistance_zeroDistance() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_NanDistance() {
+void pointsWithinDistance_NanDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t index = 1;
   
-  GEOMETRY_INDEX redMesh(1);
   redMesh.index(referencePoint, index);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
@@ -193,17 +182,17 @@ void pointsWithinDistance_NanDistance() {
 
 
 template <typename GEOMETRY_INDEX>
-void pointsWithinDistance_overflowDistance() {
+void pointsWithinDistance_overflowDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
   const Point::index_t index = 1;
   
-  GEOMETRY_INDEX redMesh(1);
   redMesh.index(referencePoint, index);
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   
   ASSERT_ANY_THROW(redMesh.pointsWithinDistance(referencePoint, std::numeric_limits<double>::max(), result););
 }
+
 
 // TODO: test they return the correct square distance!
 

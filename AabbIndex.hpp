@@ -34,9 +34,7 @@ public:
         indexZ.reserve(expectedCollectionSize);
     }
     
-  
-    //TODO: disable copy constructor or allow for move! In the other classes too!!!
-      
+    
     /** Adds a point to the index. Remember its name too. */
     void index(const POINT& p, const typename POINT::index_t index){
         
