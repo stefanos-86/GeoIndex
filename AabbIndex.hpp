@@ -36,7 +36,7 @@ public:
     
     
     /** Adds a point to the index. Remember its name too. */
-    void index(const POINT& p, const typename POINT::index_t index){
+    void index(const POINT& p, const typename PointTraits<POINT>::index index){
         
         #ifdef GEO_INDEX_SAFETY_CHECKS
             if (std::find_if(begin(indexX),
@@ -81,7 +81,7 @@ public:
     *  Returns only points strictly within the AABB.
     */
     void pointsWithinDistance(const POINT& p, 
-                              const typename POINT::coordinate_t d,
+                              const typename PointTraits<POINT>::coordinate d,
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const 
     {
         #ifdef GEO_INDEX_SAFETY_CHECKS
@@ -121,7 +121,7 @@ public:
                               SortByPointIndex<POINT>
                              );
         
-        const typename POINT::coordinate_t referenceSquareDistance = d * d;
+        const typename PointTraits<POINT>::coordinate referenceSquareDistance = d * d;
         
         #ifdef GEO_INDEX_SAFETY_CHECKS
             CheckOverflow(referenceSquareDistance);
@@ -130,9 +130,9 @@ public:
         output.clear();
         for (const auto& candidate : insideAabb) {
             const auto candidateIndex = candidate.pointIndex;
-            const typename POINT::coordinate_t candidateX = findCoordinateOf(candidateIndex, candidatesX);
-            const typename POINT::coordinate_t candidateY = findCoordinateOf(candidateIndex, candidatesY);
-            const typename POINT::coordinate_t candidateZ = findCoordinateOf(candidateIndex, candidatesZ);
+            const typename PointTraits<POINT>::coordinate candidateX = findCoordinateOf(candidateIndex, candidatesX);
+            const typename PointTraits<POINT>::coordinate candidateY = findCoordinateOf(candidateIndex, candidatesY);
+            const typename PointTraits<POINT>::coordinate candidateZ = findCoordinateOf(candidateIndex, candidatesZ);
             
             const auto candidateSquareDistance = SquaredDistance(p, POINT{candidateX, candidateY, candidateZ});
             
@@ -152,23 +152,23 @@ private:
    
     
     static bool CompareEntryWithCoordinate(const IndexAndCoordinate<POINT>& indexEntry,
-                                           const typename POINT::coordinate_t searchedValue) {
+                                           const typename PointTraits<POINT>::coordinate searchedValue) {
         return indexEntry.geometricValue < searchedValue;
     }
     
     static bool CompareEntryWithIndex(const IndexAndCoordinate<POINT>& indexEntry,
-                                      const typename POINT::index_t searchedValue) {
+                                      const typename PointTraits<POINT>::index searchedValue) {
         return indexEntry.pointIndex < searchedValue;
     }
        
     /** Scan the given index and returns the indices of the "interesting" points.*/
     void candidatesOnDimension(const std::vector<IndexAndCoordinate<POINT> >& indexForDimension,
-                               const typename POINT::coordinate_t searchDistance,
-                               const typename POINT::coordinate_t referenceCoordnate,
+                               const typename PointTraits<POINT>::coordinate searchDistance,
+                               const typename PointTraits<POINT>::coordinate referenceCoordnate,
                                std::vector<IndexAndCoordinate<POINT> >& candidates) const 
     {
-        const typename POINT::coordinate_t minAcceptedCoordinate = referenceCoordnate - searchDistance;
-        const typename POINT::coordinate_t maxAcceptedCoordinate = referenceCoordnate + searchDistance;
+        const typename PointTraits<POINT>::coordinate minAcceptedCoordinate = referenceCoordnate - searchDistance;
+        const typename PointTraits<POINT>::coordinate maxAcceptedCoordinate = referenceCoordnate + searchDistance;
 
         const auto beginCandidates = std::lower_bound(std::begin(indexForDimension),
                                                       std::end(indexForDimension),
@@ -191,8 +191,8 @@ private:
     /** This index does not store the full collection of points (but maybe it should, or should have a reference to it,
       * to avoid this kind of issues - or maybe we should move the distance test outside the indexes). 
       * Assume that groupOfCandidates is sorted by point index and point indices do not repeat. */
-    typename POINT::coordinate_t findCoordinateOf(const typename POINT::index_t pointIndex,
-                                                  const std::vector<IndexAndCoordinate<POINT> >& groupOfCandidates) const
+    typename PointTraits<POINT>::coordinate findCoordinateOf(const typename PointTraits<POINT>::index pointIndex,
+                                                             const std::vector<IndexAndCoordinate<POINT> >& groupOfCandidates) const
     {
         const auto indexEntry = std::lower_bound(std::begin(groupOfCandidates),
                                                  std::end(groupOfCandidates),

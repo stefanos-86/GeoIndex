@@ -31,11 +31,10 @@ set (FILES_TO_COMPILE
       BasicGeometryTest.cpp
       DomainAssertions.cpp
       NoIndexTest.cpp
-      #CommonTest.cpp
-      #NearestNeighborsTest.cpp
-      #AabbIndexTest.cpp
-      
+      CommonTest.cpp
+      AabbIndexTest.cpp
       #CubeIndexTest.cpp
+      #NearestNeighborsTest.cpp
 #     PerfTest.cpp
      main.cpp
 )

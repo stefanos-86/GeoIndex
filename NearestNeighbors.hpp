@@ -43,7 +43,7 @@ template <typename POINT, typename GEOMETRY_INDEX>
 void KNearestNeighbor(
     const typename std::vector<POINT>& pointCollection,
     const GEOMETRY_INDEX& geometryIndex,
-    const typename POINT::coordinate_t cullingDistance,
+    const typename PointTraits<POINT>::coordinate cullingDistance,
     const POINT& referencePoint,
     const size_t k,
     typename std::vector<IndexAndSquaredDistance<POINT> >& output
