@@ -31,26 +31,41 @@ typedef double Coordinate;
 /** Point in 3D space, as simple as it can be. 
  *  Must have x, y, z properties and have typenames for coordinate_t and index_t.
  *  Does not store the index to keep the structure as compact as possible.
- TODO: ...no lib in the world will have the two typedefs. How to make this generic??? Maybe a PointAdapter<real point type>???
-      Maybe I have to create a "type dictionary" with all the typedef, and separate the points elsewhere...???
  */
-template<typename COORDINATE, typename INDEX>
-struct GenericPoint {
-  typedef COORDINATE coordinate_t;
-  typedef INDEX index_t;
+template<typename COORDINATE>
+struct BasicPoint {
   COORDINATE x;
   COORDINATE y;
   COORDINATE z;
-  // Notice that we do not store the index. We only provide the type to ease
-  // writing client code (and be sure we find it again in functions that manipulates points
-  // without risks of mix-ups).
 };
 
-/** Default "ready to use" point. */
-typedef GenericPoint<Coordinate, PointIndex> Point;
+/** Specialize this to adapt to various kind of point classes, if the need be. */
+template<typename POINT>
+struct PointTraits {
+  typedef double coordinate;
+  typedef int index;
+};
+
+
+/** Default "ready to use" point and its traits. */
+typedef BasicPoint<Coordinate> Point;
+
+template <>
+struct PointTraits<Point> {
+  typedef Coordinate coordinate;
+  typedef PointIndex index;
+};
+
+
 
 /** Another type of point that we may see often. */
-typedef GenericPoint<float, PointIndex> FloatPoint;
+typedef BasicPoint<float> FloatPoint;
+
+template <>
+struct PointTraits<FloatPoint> {
+  typedef float coordinate;
+  typedef PointIndex index;
+};
 
 
 /** Computes the square of the distance of two points. 
@@ -60,12 +75,12 @@ typedef GenericPoint<float, PointIndex> FloatPoint;
  *  the real distance. 
  */
 template <typename POINT>
-typename POINT::coordinate_t SquaredDistance(const POINT& p1, const POINT& p2) {
-  const typename POINT::coordinate_t xDistance = p1.x - p2.x;
-  const typename POINT::coordinate_t yDistance = p1.y - p2.y;
-  const typename POINT::coordinate_t zDistance = p1.z - p2.z;
+typename PointTraits<POINT>::coordinate SquaredDistance(const POINT& p1, const POINT& p2) {
+  const typename PointTraits<POINT>::coordinate xDistance = p1.x - p2.x;
+  const typename PointTraits<POINT>::coordinate yDistance = p1.y - p2.y;
+  const typename PointTraits<POINT>::coordinate zDistance = p1.z - p2.z;
   
-  const typename POINT::coordinate_t squaredDistance = 
+  const typename PointTraits<POINT>::coordinate squaredDistance = 
     xDistance * xDistance +
     yDistance * yDistance +
     zDistance * zDistance;
