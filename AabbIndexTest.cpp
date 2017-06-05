@@ -43,6 +43,11 @@ TEST(AabbIndex, pointsWithinDistance_outputOrder) {
     pointsWithinDistance_outputOrder(index);
 }
 
+TEST(AabbIndex, pointsWithinDistance_squareDistance) {
+    AabbIndex<Point> index;
+    pointsWithinDistance_squareDistance(index);
+}
+
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(AabbIndex, index_duplicatedIndex) {

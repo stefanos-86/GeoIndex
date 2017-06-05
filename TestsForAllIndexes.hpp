@@ -194,7 +194,20 @@ void pointsWithinDistance_overflowDistance(GEOMETRY_INDEX& redMesh) {
 }
 
 
-// TODO: test they return the correct square distance!
+template <typename GEOMETRY_INDEX>
+void pointsWithinDistance_squareDistance(GEOMETRY_INDEX& redMesh) {
+  const Point referencePoint{0, 0, 0};
+  const Point neighbor{2, 0, 0};
+  
+  const PointTraits<Point>::index neighborIndex = 1;
+
+  redMesh.index(neighbor, neighborIndex);
+  
+  std::vector<IndexAndSquaredDistance<Point>> result;
+  redMesh.pointsWithinDistance(referencePoint, 4, result);
+  
+  ASSERT_EQ(4, result.at(0).geometricValue);
+}
 
 }
 

@@ -45,6 +45,11 @@ TEST(NoIndex, pointsWithinDistance_outputOrder) {
     pointsWithinDistance_outputOrder(index);
 }
 
+TEST(NoIndex, pointsWithinDistance_squareDistance) {
+    NoIndex<Point> index;
+    pointsWithinDistance_squareDistance(index);
+}
+
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(NoIndex, index_duplicatedIndex) {

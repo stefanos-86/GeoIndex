@@ -48,6 +48,11 @@ TEST(CubeIndex, pointsWithinDistance_outputOrder) {
     pointsWithinDistance_outputOrder(index);
 }
 
+TEST(CubeIndex, pointsWithinDistance_squareDistance) {
+    CubeIndex<Point> index(gridStep);
+    pointsWithinDistance_squareDistance(index);
+}
+
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
 TEST(CubeIndex, index_duplicatedIndex) {
