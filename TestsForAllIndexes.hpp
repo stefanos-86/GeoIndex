@@ -23,6 +23,7 @@ void pointsWithinDistance_samePoint(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index referenceIndex = 1;
   
   redMesh.index(referencePoint, referenceIndex);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 0.01, result);
@@ -37,6 +38,7 @@ void pointsWithinDistance_coincidentPoints(GEOMETRY_INDEX& redMesh) {
   
   redMesh.index(referencePoint, 1);
   redMesh.index(referencePoint, 2);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 0.01, result);
@@ -67,6 +69,7 @@ void pointsWithinDistance_onlyFarPoints(GEOMETRY_INDEX& redMesh) {
   redMesh.index(far1, 1);
   redMesh.index(far2, 2);
   redMesh.index(far3, 3);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 0.01, result);
@@ -83,6 +86,7 @@ void pointsWithinDistance_inAndOutPoints(GEOMETRY_INDEX& redMesh) {
   
   redMesh.index(pIn, 1);
   redMesh.index(pOut, 2);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 101, result);
@@ -98,6 +102,7 @@ void pointsWithinDistance_exactDistance(GEOMETRY_INDEX& redMesh) {
   const Point onTheBorder{100, 0, 0};
   
   redMesh.index(onTheBorder, 1);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 100, result);
@@ -120,6 +125,7 @@ void pointsWithinDistance_outputOrder(GEOMETRY_INDEX& redMesh) {
   redMesh.index(closest, closestIndex);
   redMesh.index(far, farIndex);
   redMesh.index(middle, middleIndex);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 4, result);
@@ -137,6 +143,7 @@ void index_duplicatedIndex(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index sameIndex = 1;
   
   redMesh.index(referencePoint, sameIndex);
+  redMesh.completed();
   
   ASSERT_ANY_THROW(redMesh.index(referencePoint, sameIndex));
 }
@@ -148,6 +155,7 @@ void pointsWithinDistance_negativeDistance(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   
@@ -161,6 +169,7 @@ void pointsWithinDistance_zeroDistance(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   
@@ -174,6 +183,7 @@ void pointsWithinDistance_NanDistance(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   
@@ -187,6 +197,7 @@ void pointsWithinDistance_overflowDistance(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   
@@ -202,6 +213,7 @@ void pointsWithinDistance_squareDistance(GEOMETRY_INDEX& redMesh) {
   const PointTraits<Point>::index neighborIndex = 1;
 
   redMesh.index(neighbor, neighborIndex);
+  redMesh.completed();
   
   std::vector<IndexAndSquaredDistance<Point>> result;
   redMesh.pointsWithinDistance(referencePoint, 4, result);

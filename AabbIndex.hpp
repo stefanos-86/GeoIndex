@@ -32,13 +32,20 @@ public:
         indexX.reserve(expectedCollectionSize);
         indexY.reserve(expectedCollectionSize);
         indexZ.reserve(expectedCollectionSize);
+        
+        #ifdef GEO_INDEX_SAFETY_CHECKS
+            // There is nothing in the index, so it is sorted (you can't misplace... nothing). You can do lookups.
+            readyForLookups = true;
+        #endif
     }
     
     
     /** Adds a point to the index. Remember its name too. */
     void index(const POINT& p, const typename PointTraits<POINT>::index index){
-        
         #ifdef GEO_INDEX_SAFETY_CHECKS
+            // Adding points probably breaks the order.
+            readyForLookups = false;
+            
             if (std::find_if(begin(indexX),
                              end(indexX),
                              [index](const IndexAndCoordinate<POINT>& indexEntry) {
@@ -70,6 +77,10 @@ public:
             ...but depends on openMP (libgomp) - for the moment I don't do it, to keep deps simple
             (could provide a new build target...)
         */
+        #ifdef GEO_INDEX_SAFETY_CHECKS
+            readyForLookups = true;
+        #endif
+        
     }
     
     /** Finds the points that are within distance d from p. Cleans the output vector before filling it.
@@ -86,6 +97,8 @@ public:
     {
         #ifdef GEO_INDEX_SAFETY_CHECKS
             CheckMeaningfulCullingDistance(d);
+            if (! readyForLookups)
+                throw std::runtime_error("Index not ready. Did you call completed() after the last call to index(...)?");
         #endif
         
         std::vector<IndexAndCoordinate<POINT> > candidatesX;
@@ -148,6 +161,10 @@ private:
     std::vector<IndexAndCoordinate<POINT> > indexX;
     std::vector<IndexAndCoordinate<POINT> > indexY;
     std::vector<IndexAndCoordinate<POINT> > indexZ;
+    
+    #ifdef GEO_INDEX_SAFETY_CHECKS
+        bool readyForLookups;
+    #endif
   
    
     

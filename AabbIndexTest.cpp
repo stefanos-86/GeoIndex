@@ -75,12 +75,48 @@ TEST(AabbIndex, pointsWithinDistance_overflowDistance) {
     pointsWithinDistance_overflowDistance(index);
 }
 
-//TODO: test che chiamano i lookup prima di chiudere l'indice o lo modificano dopo. >> ci deve essere un warning...
-// TODO: test con punti negli angoli
+
+#endif
+
+/* Specific tests for this algorithm only. */
+// TODO: test con punti negli angoli della AABB
+    
+#ifdef GEO_INDEX_SAFETY_CHECKS
+TEST(AabbIndex, pointsWithinDistance_incorrectOrderOfUsage_lookupOfNothing) {
+    const Point anyPoint{1, 55, 2};
+  
+    AabbIndex<Point> gi;
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    ASSERT_NO_THROW(gi.pointsWithinDistance(anyPoint, 0.01, result));
+}
+
+TEST(AabbIndex, pointsWithinDistance_incorrectOrderOfUsage_lookupWithoutPreparation) {
+    const Point anyPoint{1, 55, 2};
+  
+    AabbIndex<Point> gi;
+    gi.index(anyPoint, 1);
+    // No call to completed();
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    ASSERT_ANY_THROW(gi.pointsWithinDistance(anyPoint, 0.01, result));
+}
+
+TEST(AabbIndex, pointsWithinDistance_incorrectOrderOfUsage_addPointsAfterCompletition) {
+    const Point anyPoint{1, 55, 2};
+  
+    AabbIndex<Point> gi;
+    gi.index(anyPoint, 1);
+    gi.completed();
+    gi.index(anyPoint, 2);
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    ASSERT_ANY_THROW(gi.pointsWithinDistance(anyPoint, 0.01, result));
+}
 #endif
 
 
-/*
+/* TODO: see if those tests are still relevant.
 TEST(GeometryIndex_lookup, onePoint) {
   GeometryIndex gi;
   gi.index({0, 0, 0}, 0);
