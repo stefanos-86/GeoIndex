@@ -81,7 +81,6 @@ public:
     }
     
     std::sort(std::begin(output), std::end(output), SortByGeometry<POINT>);
-    
   }
                     
 private:

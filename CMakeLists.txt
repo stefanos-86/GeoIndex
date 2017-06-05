@@ -28,14 +28,13 @@ link_directories(
 add_definitions(-std=c++11 -O3 -Wall -march=native)
 
 set (FILES_TO_COMPILE
-      BasicGeometryTest.cpp
-      DomainAssertions.cpp
-      NoIndexTest.cpp
-      CommonTest.cpp
-      AabbIndexTest.cpp
-      CubeIndexTest.cpp
-      NearestNeighborsTest.cpp
-#     PerfTest.cpp
+     BasicGeometryTest.cpp
+     DomainAssertions.cpp
+     NoIndexTest.cpp
+     CommonTest.cpp
+     AabbIndexTest.cpp
+     CubeIndexTest.cpp
+     NearestNeighborsTest.cpp
      main.cpp
 )
 
@@ -51,12 +50,21 @@ target_link_libraries(geometryindex ${LIBRARIES_I_PILFERED})
 
 # This version has safety checks (overflow, exceptions on error...) inside.
 # The properly paranoid person should use this.
-# TODO: check if there is any performance effect.
 add_executable(geometryindex_checked ${FILES_TO_COMPILE})
 target_link_libraries(geometryindex_checked ${LIBRARIES_I_PILFERED})
 target_compile_definitions(geometryindex_checked PRIVATE GEO_INDEX_SAFETY_CHECKS)
 
-# TODO: Parallel/normal targets (with/without gomp).
+# Builds for performance tests. Those are slow to execute, so they get their own targets.
+set (PERFORMANCE_FILES
+    PerfTest.cpp
+    main.cpp
+)
+add_executable(perfTests ${PERFORMANCE_FILES})
+target_link_libraries(perfTests ${LIBRARIES_I_PILFERED})
+
+add_executable(perfTests_checked ${PERFORMANCE_FILES})
+target_link_libraries(perfTests_checked ${LIBRARIES_I_PILFERED})
+target_compile_definitions(perfTests_checked PRIVATE GEO_INDEX_SAFETY_CHECKS)
 
 
 install(TARGETS geometryindex RUNTIME DESTINATION bin)
