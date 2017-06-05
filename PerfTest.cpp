@@ -115,78 +115,20 @@ TEST(PerformanceTest, double__10000_points__cube__lookup_distance_10__field_size
     genericTest(index, redMesh<10000>());
 }
 
-//MALEDIZIONE!!! I 3 algoritmi non ritornano lo stesso risultato
 
+TEST(PerformanceTest, double__100000_points__no_index__lookup_distance_10__field_size_2000) {
+    NoIndex<Point> index;
+    genericTest(index, redMesh<100000>());
+}
 
-    /*
+TEST(PerformanceTest, double__100000_points__aabb__lookup_distance_10__field_size_2000) {
+    AabbIndex<Point> index;
+    genericTest(index, redMesh<100000>());
+}
 
-  
-  TEST(performance, base) { // 450 to 500 ms on my machine.
-    PoorMansTimer fullTest("baseline whole test");
-    std::vector<Point> redGrid;
-    fillRedGrid(redGrid);
-    Point greenPoint{0, 0, 0};
-    
-    { PoorMansTimer t("baseline lookups");
-    const auto result = TwoClosestPoints(greenPoint, redGrid);
-    std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
-    }
-  }
-  
-  TEST(performance, aabbCulling) {  // 1000ms... Does not work!!!
-    PoorMansTimer fullTest("aabb whole test");
-    std::vector<Point> redGrid;
-    fillRedGrid(redGrid);
-    Point greenPoint{0, 0, 0};
-    
-    GeometryIndex gi;
-    for (size_t i = 0; i < redGrid.size(); ++i)
-      gi.index(redGrid[i], i);
-    gi.prepareForLookups();
-    
-    { PoorMansTimer t("aabb lookups");
-    std::vector<PointIndex> closePointsIndexes;
-    gi.withinAabb(greenPoint, 100.0, closePointsIndexes);
-    
-    
-    std::vector<Point> closePoints;
-    closePoints.reserve(closePointsIndexes.size());
-    for (const auto i : closePointsIndexes)
-      closePoints.push_back(redGrid[i]);
-    // TODO: check stuff is within a sphere to avoid points in the corners...
-    // TODO: make a variant of TwoClosestPoints that takes the red grid and the indexes.
-    
-    std::cout << "Points from aabb: " << closePoints.size() << std::endl;
-    // Now do the test, but only on a few points.
-    const auto result = TwoClosestPoints(greenPoint, closePoints);
-    std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
-    }
-  }
-  
-  TEST(performance, CubeIndex) {
-    PoorMansTimer fullTest("cubes whole test");
-    std::vector<Point> redGrid;
-    fillRedGrid(redGrid);
-    Point greenPoint{0, 0, 0};
-    
-    CubeIndex cu(500);
-    for (size_t i = 0; i < redGrid.size(); ++i)
-      cu.addOnePoint(redGrid[i], i);
-    
-    { PoorMansTimer t("cubes lookups");
-      std::vector<PointIndex> closePointsIndexes;
-      cu.closeTo(greenPoint, closePointsIndexes);
-      
-      std::vector<Point> closePoints;
-      closePoints.reserve(closePointsIndexes.size());
-      for (const auto i : closePointsIndexes)
-        closePoints.push_back(redGrid[i]);
-      // Same considerations about checking a sphere as the aabb culling...
-     
-    std::cout << "Points from cubes: " << closePoints.size() << std::endl;
-    const auto result = TwoClosestPoints(greenPoint, closePoints);
-    std::cout << result.first << result.second << std::endl; // Use stuff or it may be optimized out.
-    }
-  }
-  */
+TEST(PerformanceTest, double__100000_points__cube__lookup_distance_10__field_size_2000) {
+    CubeIndex<Point> index(10);
+    genericTest(index, redMesh<100000>());
+}
+
 }
