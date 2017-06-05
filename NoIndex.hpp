@@ -32,7 +32,7 @@ public:
   }
   
   /** Adds a point to the index. Remember its name too. */
-  void index(const POINT& p, const typename POINT::index_t index){
+  void index(const POINT& p, const typename PointTraits<POINT>::index index){
 #ifdef GEO_INDEX_SAFETY_CHECKS
     if (std::find(begin(indices), end(indices), index) != end(indices))
       throw std::runtime_error("NoIndex::index Point indexed twice");
@@ -60,13 +60,13 @@ public:
    *  TODO: try to make it better: take an iterator to a generic collection. Also in the other implementations. 
    *  TODO: break in sub-functions for clarity? */
     void pointsWithinDistance(const POINT& p, 
-                              const typename POINT::coordinate_t d,
+                              const typename PointTraits<POINT>::coordinate d,
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const {
     #ifdef GEO_INDEX_SAFETY_CHECKS
         CheckMeaningfulCullingDistance(d);
     #endif
                       
-    const typename Point::coordinate_t distanceLimit = d * d;  // Don't forget we use squared distances.
+    const typename PointTraits<POINT>::coordinate distanceLimit = d * d;  // Don't forget we use squared distances.
                                                                    // TODO: if we call this a lot of time, better have an overload that takes the square...
                                                                    
     #ifdef GEO_INDEX_SAFETY_CHECKS
@@ -87,7 +87,7 @@ public:
 private:
   // Internal data: parallel arrays.
   std::vector<POINT> points;
-  std::vector<typename POINT::index_t> indices;
+  std::vector<typename PointTraits<POINT>::index> indices;
 };
 
 }

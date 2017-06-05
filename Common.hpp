@@ -2,6 +2,7 @@
 #define GEOINDEX_COMMON
 
 #include <vector>
+#include "BasicGeometry.hpp"
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
     #include <stdexcept>
@@ -19,8 +20,8 @@ namespace geoIndex {
  */
 template <typename POINT>
 struct IndexAndGeometry {
-  typename POINT::index_t pointIndex;
-  typename POINT::coordinate_t geometricValue;
+  typename PointTraits<POINT>::index pointIndex;
+  typename PointTraits<POINT>::coordinate geometricValue;
 };
 
 /** Helpers to sort and search. */

@@ -29,11 +29,12 @@ add_definitions(-std=c++11 -O3 -Wall -march=native)
 
 set (FILES_TO_COMPILE
       BasicGeometryTest.cpp
-      #NoIndexTest.cpp
+      DomainAssertions.cpp
+      NoIndexTest.cpp
       #CommonTest.cpp
       #NearestNeighborsTest.cpp
       #AabbIndexTest.cpp
-      #DomainAssertions.cpp
+      
       #CubeIndexTest.cpp
 #     PerfTest.cpp
      main.cpp

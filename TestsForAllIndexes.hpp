@@ -20,7 +20,7 @@ namespace geoIndex {
 template <typename GEOMETRY_INDEX>
 void pointsWithinDistance_samePoint(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t referenceIndex = 1;
+  const PointTraits<Point>::index referenceIndex = 1;
   
   redMesh.index(referencePoint, referenceIndex);
   
@@ -113,9 +113,9 @@ void pointsWithinDistance_outputOrder(GEOMETRY_INDEX& redMesh) {
   const Point middle{2, 0, 0};
   const Point far{3, 0, 0};
   
-  const Point::index_t closestIndex = 1;
-  const Point::index_t middleIndex = 2;
-  const Point::index_t farIndex = 3;
+  const PointTraits<Point>::index closestIndex = 1;
+  const PointTraits<Point>::index middleIndex = 2;
+  const PointTraits<Point>::index farIndex = 3;
   
   redMesh.index(closest, closestIndex);
   redMesh.index(far, farIndex);
@@ -134,7 +134,7 @@ void pointsWithinDistance_outputOrder(GEOMETRY_INDEX& redMesh) {
 template <typename GEOMETRY_INDEX>
 void index_duplicatedIndex(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t sameIndex = 1;
+  const PointTraits<Point>::index sameIndex = 1;
   
   redMesh.index(referencePoint, sameIndex);
   
@@ -145,7 +145,7 @@ void index_duplicatedIndex(GEOMETRY_INDEX& redMesh) {
 template <typename GEOMETRY_INDEX>
 void pointsWithinDistance_negativeDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t index = 1;
+  const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
   
@@ -158,7 +158,7 @@ void pointsWithinDistance_negativeDistance(GEOMETRY_INDEX& redMesh) {
 template <typename GEOMETRY_INDEX>
 void pointsWithinDistance_zeroDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t index = 1;
+  const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
   
@@ -171,7 +171,7 @@ void pointsWithinDistance_zeroDistance(GEOMETRY_INDEX& redMesh) {
 template <typename GEOMETRY_INDEX>
 void pointsWithinDistance_NanDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t index = 1;
+  const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
   
@@ -184,7 +184,7 @@ void pointsWithinDistance_NanDistance(GEOMETRY_INDEX& redMesh) {
 template <typename GEOMETRY_INDEX>
 void pointsWithinDistance_overflowDistance(GEOMETRY_INDEX& redMesh) {
   const Point referencePoint{1, 55, 2};
-  const Point::index_t index = 1;
+  const PointTraits<Point>::index index = 1;
   
   redMesh.index(referencePoint, index);
   

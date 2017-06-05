@@ -9,7 +9,7 @@ namespace geoIndex {
 /** Utilities for testing. */
 
 /** Passes if pointIndex is in one of the elements of result, fails otherwise. */
-void ASSERT_INDEX_PRESENT(const std::vector<IndexAndGeometry<Point>>& result, const Point::index_t pointIndex);
+void ASSERT_INDEX_PRESENT(const std::vector<IndexAndGeometry<Point>>& result, const PointTraits<Point>::index pointIndex);
 
 }
 
