@@ -33,7 +33,7 @@ set (FILES_TO_COMPILE
       NoIndexTest.cpp
       CommonTest.cpp
       AabbIndexTest.cpp
-      #CubeIndexTest.cpp
+      CubeIndexTest.cpp
       #NearestNeighborsTest.cpp
 #     PerfTest.cpp
      main.cpp

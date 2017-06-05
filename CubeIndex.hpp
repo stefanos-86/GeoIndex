@@ -18,7 +18,7 @@ namespace geoIndex {
     /** Space partition unit. Notice that we only know the indexes at this level. */
     template <typename POINT>
     struct Cube {
-        std::vector<typename POINT::index_t> indexOfPointsInside;
+        std::vector<typename PointTraits<POINT>::index> indexOfPointsInside;
     };
   
     typedef int64_t CubicCoordinate;
@@ -30,15 +30,15 @@ namespace geoIndex {
         void insert(const CubicCoordinate i,
                     const CubicCoordinate j,
                     const CubicCoordinate k,
-                    const typename POINT::index_t index
+                    const typename PointTraits<POINT>::index index
                    ) {
             auto& cubeForInsertion = cubes[i][j][k];
             cubeForInsertion.indexOfPointsInside.push_back(index);
         }
 
-        const std::vector<typename POINT::index_t>& read(const CubicCoordinate i,
-                                                         const CubicCoordinate j,
-                                                         const CubicCoordinate k) const
+        const std::vector<typename PointTraits<POINT>::index>& read(const CubicCoordinate i,
+                                                                    const CubicCoordinate j,
+                                                                    const CubicCoordinate k) const
        {
              static const Cube<POINT> empty;  // Void return value.
   
@@ -76,12 +76,12 @@ template <typename POINT>
 class CubeIndex {
 public:
     /** Creates an index that divides the space in cubes of the given side size. */
-    CubeIndex(typename Point::coordinate_t cubeSide) :
+    CubeIndex(typename PointTraits<POINT>::coordinate cubeSide) :
         gridStep(cubeSide)
     {}
 
     /** Adds a point to the index. Remember its name too. */
-    void index(const POINT& p, const typename POINT::index_t index){
+    void index(const POINT& p, const typename PointTraits<POINT>::index index){
         #ifdef GEO_INDEX_SAFETY_CHECKS
             if (points.find(index) != end(points))
                 throw std::runtime_error("NoIndex::index Point indexed twice");
@@ -99,7 +99,7 @@ public:
     void completed() {};
     
     void pointsWithinDistance(const POINT& p, 
-                              const typename POINT::coordinate_t d,
+                              const typename PointTraits<POINT>::coordinate d,
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const {
         #ifdef GEO_INDEX_SAFETY_CHECKS
             CheckMeaningfulCullingDistance(d);
@@ -121,7 +121,7 @@ public:
         const CubicCoordinate scanDistance = dAsNumberOfCubes + static_cast<CubicCoordinate>(1);
     
         // Scan all the cubes around the one that contains the reference point.
-        std::vector<typename POINT::index_t> indicesOfCandidates;
+        std::vector<typename PointTraits<POINT>::index> indicesOfCandidates;
        
         #ifdef GEO_INDEX_SAFETY_CHECKS
             StopSumOverflow<CubicCoordinate>(iReference, scanDistance);
@@ -161,10 +161,10 @@ public:
     }
                             
 private:
-    const typename POINT::coordinate_t gridStep;
+    const typename PointTraits<POINT>::coordinate gridStep;
     
     CubeCollection<POINT> cubes;
-    std::unordered_map<typename POINT::index_t, POINT> points;  ///< Must keep track of the points for geometry computations.
+    std::unordered_map<typename PointTraits<POINT>::index, POINT> points;  ///< Must keep track of the points for geometry computations.
 
     
     /** To convert from the x, y, z coordinates of points to the discreet coordinates of cubes. 
@@ -173,10 +173,10 @@ private:
      *
      *  Assume implicitely that coordinates are expressed in some "big" type, like double, that may have
      *  bigger values that the integer used for CubicCoordinate. */
-    CubicCoordinate spaceToCubic(const typename POINT::coordinate_t coordinate) const 
+    CubicCoordinate spaceToCubic(const typename PointTraits<POINT>::coordinate coordinate) const 
     {
         // Finds the cube and truncates decimal in single to.
-        const typename POINT::coordinate_t beforeTruncation = coordinate / gridStep;
+        const typename PointTraits<POINT>::coordinate beforeTruncation = coordinate / gridStep;
         #ifdef GEO_INDEX_SAFETY_CHECKS
             if (beforeTruncation > std::numeric_limits<CubicCoordinate>::max())
                 throw std::runtime_error("Cubic coordinate overflow");

@@ -11,7 +11,7 @@ using namespace std;
 
 namespace geoIndex {
 
-static const Point::coordinate_t gridStep = 10.0; // More to illustrate how to use it than other reasons.
+static const PointTraits<Point>::coordinate gridStep = 10.0; // More to illustrate how to use it than other reasons.
 
 TEST(CubeIndex, pointsWithinDistance_samePoint) {
     CubeIndex<Point> index(gridStep);
@@ -83,26 +83,26 @@ TEST(CubeCollection, origin) {
     CubeCollection<Point> cc;
     cc.insert(0, 0, 0, 10);
 
-    ASSERT_EQ(std::vector<Point::index_t>{10}, cc.read(0, 0, 0));
+    ASSERT_EQ(std::vector<PointTraits<Point>::index>{10}, cc.read(0, 0, 0));
 }
 
 
 TEST(CubeCollection, readFromUnmappedSlice) {
     CubeCollection<Point> cc;
-    ASSERT_EQ(std::vector<Point::index_t>{}, cc.read(0, 0, 0));
+    ASSERT_EQ(std::vector<PointTraits<Point>::index>{}, cc.read(0, 0, 0));
 }
  
 TEST(CubeCollection, readFromUnmappedRow) {
     CubeCollection<Point> cc;
     cc.insert(0, 0, 0, 0);
-    ASSERT_EQ(std::vector<Point::index_t>{}, cc.read(0, 1, 0));
+    ASSERT_EQ(std::vector<PointTraits<Point>::index>{}, cc.read(0, 1, 0));
 }
  
 TEST(CubeCollection, readFromUnmappedCube) {
     CubeCollection<Point> cc;
     cc.insert(0, 0, 0, 0);
     cc.insert(0, 1, 0, 1);
-    ASSERT_EQ(std::vector<Point::index_t>{}, cc.read(0, 1, 2));
+    ASSERT_EQ(std::vector<PointTraits<Point>::index>{}, cc.read(0, 1, 2));
 }
 
 #ifdef GEO_INDEX_SAFETY_CHECKS
