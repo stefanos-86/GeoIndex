@@ -72,7 +72,7 @@ static void TestKNearest_NoIndex(const std::vector<Point>& points,
     NoIndex<Point> geometryIndex;
     BuildIndex(points, geometryIndex);
     const Point referencePoint{0, 0, 0};
-    const Point::coordinate_t cullingDistance = 65;
+    const PointTraits<Point>::coordinate cullingDistance = 65;
     
     const size_t k = 2;
     
@@ -133,7 +133,7 @@ TEST(KNearestNeighbor, GenericCase) {
     NoIndex<Point> geometryIndex;
     BuildIndex(points, geometryIndex);
     
-    const Point::coordinate_t cullingDistance = 65;
+    const PointTraits<Point>::coordinate cullingDistance = 65;
     
     const size_t k = 3;
     std::vector<IndexAndSquaredDistance<Point> > result;
@@ -159,7 +159,7 @@ TEST(KNearestNeighbor, GenericCase) {
 TEST(KNearestNeighbor, zeroDistance) {
     const std::vector<Point> points;
     const NoIndex<Point> geometryIndex;
-    const Point::coordinate_t cullingDistance = 0;
+    const PointTraits<Point>::coordinate cullingDistance = 0;
    
     
     const Point referencePoint{0, 0, 0};
@@ -181,7 +181,7 @@ TEST(KNearestNeighbor, zeroDistance) {
 TEST(KNearestNeighbor, zeroK) {
     const std::vector<Point> points;
     const NoIndex<Point> geometryIndex;
-    const Point::coordinate_t cullingDistance = 10;
+    const PointTraits<Point>::coordinate cullingDistance = 10;
    
     
     const Point referencePoint{0, 0, 0};

@@ -34,7 +34,7 @@ set (FILES_TO_COMPILE
       CommonTest.cpp
       AabbIndexTest.cpp
       CubeIndexTest.cpp
-      #NearestNeighborsTest.cpp
+      NearestNeighborsTest.cpp
 #     PerfTest.cpp
      main.cpp
 )

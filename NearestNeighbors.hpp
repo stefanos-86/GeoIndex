@@ -20,7 +20,7 @@ void BuildIndex(
     const std::vector<POINT> knownPoints,
     GEOMETRY_INDEX& resultingIndex
 ) {
-    for (typename POINT::index_t i = 0; i < knownPoints.size(); ++i)
+    for (typename PointTraits<POINT>::index i = 0; i < knownPoints.size(); ++i)
         resultingIndex.index(knownPoints[i], i);
     
     resultingIndex.completed();
