@@ -2,6 +2,7 @@
 #define GEOINDEX_NEAREST_NEIGHBORs
 
 #include <vector>
+#include <type_traits>
 
 #include "Common.hpp"
 
@@ -14,12 +15,17 @@ namespace geoIndex {
 /** Utility function to build the all the index in the same way.
  *  Automatically assigns the indices. This may not be what the user wants.
  *  But in this case, he will have to traverse the specific point collection by himself...
+ * 
+ *  Assumes that PointTraits<POINT>::index is an unsigned integral type.
  */
 template <typename POINT, typename GEOMETRY_INDEX>
 void BuildIndex(
     const std::vector<POINT> knownPoints,
     GEOMETRY_INDEX& resultingIndex
 ) {
+   static_assert(std::is_unsigned<typename PointTraits<POINT>::index>::value,
+                 "BuildIndex can only deal with unsigned integral types as indexes.");
+    
     for (typename PointTraits<POINT>::index i = 0; i < knownPoints.size(); ++i)
         resultingIndex.index(knownPoints[i], i);
     

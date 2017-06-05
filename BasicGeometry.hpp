@@ -2,7 +2,7 @@
 #define GEOINDEX_BASIC_GEOMETRY
 
 #include <cstring>
-
+#include <type_traits>
 #ifdef GEO_INDEX_SAFETY_CHECKS
   #include <stdexcept>
   #include <cmath>
@@ -39,11 +39,19 @@ struct BasicPoint {
   COORDINATE z;
 };
 
-/** Specialize this to adapt to various kind of point classes, if the need be. */
+class NotAPoint{};
+
+/** Specialize this to adapt to various kind of point classes, if the need be.
+ *  It is up to the user to write the specialization. Should it be missing, there should be a nice compile-time error
+ *  to remind the programmer to make one.
+ */
 template<typename POINT>
 struct PointTraits {
-  typedef double coordinate;
-  typedef int index;
+    /* The compiler "elaborates" static_assert even before instantiating the template (and this seems to be
+        legal (https://stackoverflow.com/questions/5246049/c11-static-assert-and-template-instantiation).
+        But if we use is_same, the compiler can't pre-compute the value, even if it is always false.
+        With that, it should stop the compilation only when this struct/template is actually instantiated. */
+    static_assert(std::is_same<POINT, NotAPoint>::value, "You forgot to specialize PointTraits for your class.");
 };
 
 

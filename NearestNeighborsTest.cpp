@@ -152,8 +152,6 @@ TEST(KNearestNeighbor, GenericCase) {
     ASSERT_INDEX_PRESENT(result, 1);
 }
 
-// TODO: test with non-default classes.
-
 #ifdef GEO_INDEX_SAFETY_CHECKS
 
 TEST(KNearestNeighbor, zeroDistance) {
@@ -201,6 +199,42 @@ TEST(KNearestNeighbor, zeroK) {
 }
 
 #endif
+/** This class makes little sense. It is just to show how to use custom classes. */
+class PointAndClick {
+public:
+    int x;
+    int y;
+    int z;
+    void doNothing(){};
+private:
+    char whyNotACharHere;
+    float someValue;
+};
 
+template<>
+struct PointTraits<PointAndClick> {
+    typedef int coordinate;
+    typedef unsigned int index;
+};
+
+
+TEST(KNearestNeighbor, UserDefinedClasses) {
+    NoIndex<PointAndClick> geometryIndex;
+    std::vector<PointAndClick> points;
+    BuildIndex(points, geometryIndex);
+    PointAndClick referencePoint;
+    
+    const size_t k = 2;
+    
+    std::vector<IndexAndSquaredDistance<PointAndClick> > result;
+    
+    KNearestNeighbor(
+        points,
+        geometryIndex,
+        2,
+        referencePoint,
+        k,
+        result);
+}
 
 }
