@@ -57,11 +57,13 @@ void CheckOverflow(const POINT_COORDINATE value) {
 }
 
 template <typename DISTANCE_TYPE>
-void CheckMeaningfulCullingDistance(const DISTANCE_TYPE d) {
+void CheckMeaningfulDistance(const DISTANCE_TYPE d) {
     if (d <= 0)
         throw std::runtime_error("Negative distance");
     if (std::isnan(d))
         throw std::runtime_error("Invalid distance");
+    
+    CheckOverflow(d);
 }  
 
 /** Throws if a + b would go over the maximum. 

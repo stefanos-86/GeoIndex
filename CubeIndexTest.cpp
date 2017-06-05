@@ -131,9 +131,73 @@ TEST(CubeIndex, pointsWithinDistance_scanPlusReference) {
     ASSERT_ANY_THROW(cu.pointsWithinDistance(Point{referenceCloseToLimit, 0, 0}, 20, output));
 }
 
-// TODO: Limit cases with points near the cube limits.
-// TODO: different cube steps, different distance with respect to the cubes, idiotic cube sizes.
-
+TEST(CubeIndex, invalidCubeSize) {
+    ASSERT_ANY_THROW(CubeIndex<Point> cu(-1));
+    // No need to deeply test all cases - it relies on a common self-test function.
+};
 #endif
+
+TEST(CubeIndex, pointsWithinDistance_smallCubes) {
+    CubeIndex<Point> cu(0.01);  // Don't make them too small - gets slow when looking into tons of cubes.
+    const Point testPoint{0, 0, 22};
+    const Point lookupPoint{0, 0, 23};
+    
+    cu.index(testPoint, 1);
+    cu.completed();
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    cu.pointsWithinDistance(lookupPoint, 1.01, result);
+    
+    ASSERT_INDEX_PRESENT(result, 1);
+}
+
+TEST(CubeIndex, pointsWithinDistance_bigCubes) {
+    CubeIndex<Point> cu(1000);
+    const Point testPoint{0, 0, 22};
+    const Point lookupPoint{0, 0, 23};
+    
+    cu.index(testPoint, 1);
+    cu.completed();
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    cu.pointsWithinDistance(lookupPoint, 1.01, result);
+    
+    ASSERT_INDEX_PRESENT(result, 1);
+}
+
+TEST(CubeIndex, pointsWithinDistance_cubesBoundaries) {
+    CubeIndex<Point> cu(10);
+    const Point inFirstCube{0, 0, 9.999};
+    const Point inOtherCube{0, 0, 10.0001};
+    const Point boundary{0, 0, 10};
+    const Point lookupPoint{0, 0, 0};
+    
+    cu.index(inFirstCube, 1);
+    cu.index(inOtherCube, 2);
+    cu.index(boundary, 3);
+    cu.completed();
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    cu.pointsWithinDistance(lookupPoint, 10, result);
+    
+    ASSERT_INDEX_PRESENT(result, 1);
+    ASSERT_EQ(1, result.size());
+}
+
+TEST(CubeIndex, pointsWithinDistance_bizzarreCubeSize) {
+    CubeIndex<Point> cu(125.23);
+    const Point outsidePoint{0, 0, 125.3};
+    const Point insidePoint{0, 0, 125};
+    const Point lookupPoint{0, 0, 125.1};
+    
+    cu.index(insidePoint, 1);
+    cu.index(outsidePoint, 2);
+    cu.completed();
+    
+    std::vector<IndexAndSquaredDistance<Point>> result;
+    cu.pointsWithinDistance(lookupPoint, 0.2, result);
+    
+    ASSERT_INDEX_PRESENT(result, 1);
+}
 
 }

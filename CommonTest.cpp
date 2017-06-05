@@ -53,18 +53,21 @@ TEST(CheckOverflow, Overflow) {
     ASSERT_ANY_THROW(CheckOverflow<double>(1.0 / 0.0));
 }
 
-TEST(CheckMeaningfulCullingDistance, correct) {
-    ASSERT_NO_THROW(CheckMeaningfulCullingDistance<float>(29));
+TEST(CheckMeaningfulDistance, correct) {
+    ASSERT_NO_THROW(CheckMeaningfulDistance<float>(29));
 }
 
-TEST(CheckMeaningfulCullingDistance, notADistance) {
-    ASSERT_ANY_THROW(CheckMeaningfulCullingDistance<float>(-29));
+TEST(CheckMeaningfulDistance, notADistance) {
+    ASSERT_ANY_THROW(CheckMeaningfulDistance<float>(-29));
 }
 
-TEST(CheckMeaningfulCullingDistance, insane) {
-    ASSERT_ANY_THROW(CheckMeaningfulCullingDistance<float>(0.0 / 0.0));
+TEST(CheckMeaningfulDistance, insane) {
+    ASSERT_ANY_THROW(CheckMeaningfulDistance<float>(0.0 / 0.0));
 }
 
+TEST(CheckMeaningfulDistance, unlimited) {
+    ASSERT_ANY_THROW(CheckMeaningfulDistance<float>(1.0 / 0.0));
+}
 
 TEST(StopSumOverflow, NoOverflow) {
     ASSERT_NO_THROW(StopSumOverflow<int>(1, 1));

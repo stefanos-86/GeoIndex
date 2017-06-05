@@ -63,7 +63,7 @@ public:
                               const typename PointTraits<POINT>::coordinate d,
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const {
     #ifdef GEO_INDEX_SAFETY_CHECKS
-        CheckMeaningfulCullingDistance(d);
+        CheckMeaningfulDistance(d);
     #endif
                       
     const typename PointTraits<POINT>::coordinate distanceLimit = d * d;  // Don't forget we use squared distances.

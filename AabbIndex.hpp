@@ -2,7 +2,7 @@
 #define GEOINDEX_AABB_INDEX
 
 #include <vector>
-#include <algorithm> // TODO provide another build target... #include <parallel/algorithm>
+#include <algorithm> // Or #include <parallel/algorithm>.
 #include <iterator>
 
 #include "Common.hpp"
@@ -74,8 +74,8 @@ public:
             __gnu_parallel::sort(indexX.begin(), indexX.end());
             __gnu_parallel::sort(indexY.begin(), indexY.end());
             __gnu_parallel::sort(indexZ.begin(), indexZ.end());
-            ...but depends on openMP (libgomp) - for the moment I don't do it, to keep deps simple
-            (could provide a new build target...)
+            ...but depends on openMP (libgomp) - for the moment I don't do it, to keep deps simple.
+            The speedup we can get here should be tested.
         */
         #ifdef GEO_INDEX_SAFETY_CHECKS
             readyForLookups = true;
@@ -96,7 +96,7 @@ public:
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const 
     {
         #ifdef GEO_INDEX_SAFETY_CHECKS
-            CheckMeaningfulCullingDistance(d);
+            CheckMeaningfulDistance(d);
             if (! readyForLookups)
                 throw std::runtime_error("Index not ready. Did you call completed() after the last call to index(...)?");
         #endif

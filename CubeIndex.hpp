@@ -78,7 +78,11 @@ public:
     /** Creates an index that divides the space in cubes of the given side size. */
     CubeIndex(typename PointTraits<POINT>::coordinate cubeSide) :
         gridStep(cubeSide)
-    {}
+    {
+        #ifdef GEO_INDEX_SAFETY_CHECKS
+            CheckMeaningfulDistance(gridStep);
+        #endif
+    }
 
     /** Adds a point to the index. Remember its name too. */
     void index(const POINT& p, const typename PointTraits<POINT>::index index){
@@ -102,7 +106,7 @@ public:
                               const typename PointTraits<POINT>::coordinate d,
                               std::vector<IndexAndSquaredDistance<POINT> >& output) const {
         #ifdef GEO_INDEX_SAFETY_CHECKS
-            CheckMeaningfulCullingDistance(d);
+            CheckMeaningfulDistance(d);
         #endif
             
         const CubicCoordinate iReference = spaceToCubic(p.x);
