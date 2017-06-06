@@ -77,7 +77,6 @@ static void TestKNearest_NoIndex(const std::vector<Point>& points,
     const size_t k = 2;
     
     KNearestNeighbor(
-        points,
         geometryIndex,
         cullingDistance,
         referencePoint,
@@ -139,7 +138,6 @@ TEST(KNearestNeighbor, GenericCase) {
     std::vector<IndexAndSquaredDistance<Point> > result;
     
     KNearestNeighbor(
-        points,
         geometryIndex,
         cullingDistance,
         referencePoint,
@@ -167,7 +165,6 @@ TEST(KNearestNeighbor, zeroDistance) {
     
     ASSERT_ANY_THROW(
         KNearestNeighbor(
-            points,
             geometryIndex,
             cullingDistance,
             referencePoint,
@@ -189,7 +186,6 @@ TEST(KNearestNeighbor, zeroK) {
     
     ASSERT_ANY_THROW(
         KNearestNeighbor(
-            points,
             geometryIndex,
             cullingDistance,
             referencePoint,
@@ -229,7 +225,6 @@ TEST(KNearestNeighbor, UserDefinedClasses) {
     std::vector<IndexAndSquaredDistance<PointAndClick> > result;
     
     KNearestNeighbor(
-        points,
         geometryIndex,
         2,
         referencePoint,

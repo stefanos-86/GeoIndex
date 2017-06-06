@@ -34,8 +34,8 @@ private:
 //From http://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c
 double fRand()
 {
-    const double fMin = -2000;
-    const double fMax = +2000;
+    const double fMin = -1500;
+    const double fMax = +1500;
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
@@ -49,9 +49,6 @@ static void fillRedMesh(std::vector<Point>& redMesh, const uint32_t pointsToUse)
     
 }
  
-TEST(performance, timingOverhead) {
-    PoorMansTimer("Test the timer");
-}
 
 template<uint32_t numberOfPoints>
 static const std::vector<Point>& redMesh() {
@@ -60,14 +57,23 @@ static const std::vector<Point>& redMesh() {
     if (! ready)  {
         fillRedMesh(redMesh, numberOfPoints);
         ready = true;
+        std::cout << "Built mesh of " << numberOfPoints << " points" << std::endl;
     }
-    
-    std::cout << "Built mesh of " << numberOfPoints << " points" << std::endl;
     return redMesh;
 }
 
+TEST(performance, prepareInitFirstUse) {
+    PoorMansTimer("Test the timer");
+    redMesh<1000>();
+    redMesh<10000>();
+    redMesh<100000>();
+    redMesh<200000>();
+    redMesh<1000000>();
+}
+
+
 template<typename INDEX>
-void genericTest(INDEX index, const std::vector<Point>& redMesh) {
+void singleLookupTest(INDEX index, const std::vector<Point>& redMesh, double distance) {
     {
         auto t = PoorMansTimer("Index preparation");
         BuildIndex(redMesh, index);
@@ -77,58 +83,178 @@ void genericTest(INDEX index, const std::vector<Point>& redMesh) {
     std::vector<IndexAndSquaredDistance<Point> > results;
     {
         auto t = PoorMansTimer("Lookup time");
-        index.pointsWithinDistance(lookupPoint, 500, results);
+        index.pointsWithinDistance(lookupPoint, distance, results);
     }
 
     std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result. 
 }
 
+template<typename INDEX>
+void multipleLookupTest(INDEX index, const std::vector<Point>& redMesh, const std::vector<Point>& greenMesh, double distance) {
+    BuildIndex(redMesh, index);
+/*
+    for (const auto& p : greenMesh){
+        KNearestNeighbor(re);
+    }
+    
+    const Point lookupPoint{0, 0, 0};
+    std::vector<IndexAndSquaredDistance<Point> > results;
+    {
+        auto t = PoorMansTimer("Lookup time");
+        index.pointsWithinDistance(lookupPoint, distance, results);
+    }
 
-TEST(PerformanceTest, double__1000_points__no_index__lookup_distance_10__field_size_2000) {
+    std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result. */
+}
+
+
+
+
+/* Variation in collection size. */
+TEST(PerformanceTest, noIndex_1000) {
     NoIndex<Point> index;
-    genericTest(index, redMesh<1000>());
+    singleLookupTest(index, redMesh<1000>(), 100);
 }
 
-TEST(PerformanceTest, double__1000_points__aabb__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, aabb_1000) {
     AabbIndex<Point> index;
-    genericTest(index, redMesh<1000>());
+    singleLookupTest(index, redMesh<1000>(), 100);
 }
 
-TEST(PerformanceTest, double__1000_points__cube__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, cube_1000) {
     CubeIndex<Point> index(10);
-    genericTest(index, redMesh<1000>());
+    singleLookupTest(index, redMesh<1000>(), 100);
 }
 
 
-TEST(PerformanceTest, double__10000_points__no_index__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, noIndex_10000) {
     NoIndex<Point> index;
-    genericTest(index, redMesh<10000>());
+    singleLookupTest(index, redMesh<10000>(), 100);
 }
 
-TEST(PerformanceTest, double__10000_points__aabb__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, aabb_10000) {
     AabbIndex<Point> index;
-    genericTest(index, redMesh<10000>());
+    singleLookupTest(index, redMesh<10000>(), 100);
 }
 
-TEST(PerformanceTest, double__10000_points__cube__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, cube_10000) {
     CubeIndex<Point> index(10);
-    genericTest(index, redMesh<10000>());
+    singleLookupTest(index, redMesh<10000>(), 100);
 }
 
 
-TEST(PerformanceTest, double__100000_points__no_index__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, noIndex_100000) {
     NoIndex<Point> index;
-    genericTest(index, redMesh<100000>());
+    singleLookupTest(index, redMesh<100000>(), 100);
 }
 
-TEST(PerformanceTest, double__100000_points__aabb__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, aabb_100000) {
     AabbIndex<Point> index;
-    genericTest(index, redMesh<100000>());
+    singleLookupTest(index, redMesh<100000>(), 100);
 }
 
-TEST(PerformanceTest, double__100000_points__cube__lookup_distance_10__field_size_2000) {
+TEST(PerformanceTest, cube_100000) {
     CubeIndex<Point> index(10);
-    genericTest(index, redMesh<100000>());
+    singleLookupTest(index, redMesh<100000>(), 100);
 }
+
+
+TEST(PerformanceTest, noIndex_200000) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 100);
+}
+
+TEST(PerformanceTest, aabb_200000) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 100);
+}
+
+TEST(PerformanceTest, cube_200000) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<200000>(), 100);
+}
+
+TEST(PerformanceTest, noIndex_1000000) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<1000000>(), 100);
+}
+
+TEST(PerformanceTest, aabb_1000000) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<1000000>(), 100);
+}
+
+TEST(PerformanceTest, cube_1000000) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<1000000>(), 100);
+}
+
+
+/* Variation in search distance. */
+
+TEST(PerformanceTest, noIndex_d1) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 1);
+}
+
+TEST(PerformanceTest, aabb_d1) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 1);
+}
+
+TEST(PerformanceTest, cube_d1) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<200000>(), 1);
+}
+
+
+TEST(PerformanceTest, noIndex_d10) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 10);
+}
+
+TEST(PerformanceTest, aabb_d10) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 10);
+}
+
+TEST(PerformanceTest, cube_d10) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<200000>(), 10);
+}
+
+
+TEST(PerformanceTest, noIndex_d50) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+TEST(PerformanceTest, aabb_d50) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+TEST(PerformanceTest, cube_d50) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+/*
+TEST(PerformanceTest, noIndex_multipleLookup) {
+    NoIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+TEST(PerformanceTest, aabb_d50) {
+    AabbIndex<Point> index;
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+TEST(PerformanceTest, cube_d50) {
+    CubeIndex<Point> index(10);
+    singleLookupTest(index, redMesh<200000>(), 50);
+}
+
+*/
 
 }

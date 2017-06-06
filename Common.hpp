@@ -26,7 +26,7 @@ struct IndexAndGeometry {
 
 /** Helpers to sort and search. */
 template <typename POINT>
-static bool SortByPointIndex(const IndexAndGeometry<POINT>& lhs,
+static const bool SortByPointIndex(const IndexAndGeometry<POINT>& lhs,
                              const IndexAndGeometry<POINT>& rhs)
 {
     return lhs.pointIndex < rhs.pointIndex;

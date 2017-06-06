@@ -74,7 +74,8 @@ public:
     #endif
         
     output.clear();
-    for (size_t i = 0; i < points.size(); ++i) {
+    size_t i = 0;
+    for (i = 0; i < points.size(); ++i) {
         const auto squaredDistance = SquaredDistance(p, points[i]);
         if (squaredDistance < distanceLimit)
             output.push_back({indices[i], squaredDistance});

@@ -101,6 +101,7 @@ public:
                 throw std::runtime_error("Index not ready. Did you call completed() after the last call to index(...)?");
         #endif
         
+
         std::vector<IndexAndCoordinate<POINT> > candidatesX;
         std::vector<IndexAndCoordinate<POINT> > candidatesY;
         std::vector<IndexAndCoordinate<POINT> > candidatesZ;
@@ -108,13 +109,6 @@ public:
         candidatesOnDimension(indexX, d, p.x, candidatesX);
         candidatesOnDimension(indexY, d, p.y, candidatesY);
         candidatesOnDimension(indexZ, d, p.z, candidatesZ);
-        
-        // TODO: would it be faster with sets? 
-        std::sort(std::begin(candidatesX), std::end(candidatesX), SortByPointIndex<POINT>);
-        std::sort(std::begin(candidatesY), std::end(candidatesY), SortByPointIndex<POINT>);
-        std::sort(std::begin(candidatesZ), std::end(candidatesZ), SortByPointIndex<POINT>);
-
-        
         
         std::vector<IndexAndCoordinate<POINT> > insideAabbXY;
         std::set_intersection(std::begin(candidatesX),
@@ -201,9 +195,15 @@ private:
         candidates.reserve(std::distance(beginCandidates, endCandidates));
         for (auto i = beginCandidates; i != endCandidates; ++i)
             candidates.push_back(*i);
-            
-    }
-    
+        
+        // TODO: would it be faster with sets? THIS IS A MAJOR BOTTLENECK... in callgrind only?
+       //std::sort(std::begin(candidates), std::end(candidates), SortByPointIndex<POINT>);
+        
+        std::sort(std::begin(candidates), std::end(candidates), [](const IndexAndGeometry<POINT>& lhs,
+                             const IndexAndGeometry<POINT>& rhs)
+        {return lhs.pointIndex < rhs.pointIndex;});
+        
+    }    
     
     /** This index does not store the full collection of points (but maybe it should, or should have a reference to it,
       * to avoid this kind of issues - or maybe we should move the distance test outside the indexes). 

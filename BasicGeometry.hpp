@@ -98,7 +98,6 @@ typename PointTraits<POINT>::coordinate SquaredDistance(const POINT& p1, const P
       throw std::runtime_error("Overflow");
 #endif
   
-  
   return squaredDistance;
 }
 

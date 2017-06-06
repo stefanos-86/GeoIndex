@@ -47,7 +47,6 @@ void BuildIndex(
  */
 template <typename POINT, typename GEOMETRY_INDEX>
 void KNearestNeighbor(
-    const typename std::vector<POINT>& pointCollection,
     const GEOMETRY_INDEX& geometryIndex,
     const typename PointTraits<POINT>::coordinate cullingDistance,
     const POINT& referencePoint,
