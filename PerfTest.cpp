@@ -92,19 +92,16 @@ void singleLookupTest(INDEX index, const std::vector<Point>& redMesh, double dis
 template<typename INDEX>
 void multipleLookupTest(INDEX index, const std::vector<Point>& redMesh, const std::vector<Point>& greenMesh, double distance) {
     BuildIndex(redMesh, index);
-/*
-    for (const auto& p : greenMesh){
-        KNearestNeighbor(re);
-    }
-    
-    const Point lookupPoint{0, 0, 0};
+    static const size_t neededNearest = 2;
+
     std::vector<IndexAndSquaredDistance<Point> > results;
     {
-        auto t = PoorMansTimer("Lookup time");
-        index.pointsWithinDistance(lookupPoint, distance, results);
+        auto t = PoorMansTimer("Several lookups time");
+        for (const auto& p : greenMesh)
+            KNearestNeighbor(index, distance, p, neededNearest, results);
     }
-
-    std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result. */
+    
+    std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result.
 }
 
 
@@ -239,22 +236,21 @@ TEST(PerformanceTest, cube_d50) {
     singleLookupTest(index, redMesh<200000>(), 50);
 }
 
-/*
-TEST(PerformanceTest, noIndex_multipleLookup) {
+
+TEST(PerformanceTest, noIndex_multipleLookups) {
     NoIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 50);
+    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
 }
 
-TEST(PerformanceTest, aabb_d50) {
+TEST(PerformanceTest, aabb_multipleLookups) {
     AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 50);
+    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
 }
 
-TEST(PerformanceTest, cube_d50) {
+TEST(PerformanceTest, cube_multipleLookups) {
     CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<200000>(), 50);
+    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
 }
 
-*/
 
 }
