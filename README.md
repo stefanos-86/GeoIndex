@@ -75,5 +75,5 @@ If it does not suit you, or you already have a class for points (maybe from a re
 Specialize geoIndex::PointTraits for it (look for the "TEST(KNearestNeighbor, UserDefinedClasses) " in NearestNeighborsTest.cpp and copy from there).
 
 ## Acknowledgments
-I would like to thank Alessio Castorrini (for challenging me to solve this problem and for testing the reults) and Marco "[ilproheta](https://github.com/ilpropheta)" Arena (for pulling me out of a nasty template trap I put myself into). 
+I would like to thank Alessio Castorrini (for challenging me to solve this problem and for testing the reults) and [Marco Arena](https://github.com/ilpropheta) (for pulling me out of a nasty template trap I put myself into). 
 
