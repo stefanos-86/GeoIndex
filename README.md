@@ -70,7 +70,7 @@ Don't forget to time how long does it take to prepare the index! It may "eat" al
 
 ## Bells and whistles!
 
-Point uses double for gemometry and coordinates and size_t for point indexes.
+Point uses double for geometry and coordinates and size_t for point indexes.
 If it does not suit you, or you already have a class for points (maybe from a real-world library...), you can use it.
 Specialize geoIndex::PointTraits for it (look for the "TEST(KNearestNeighbor, UserDefinedClasses) " in NearestNeighborsTest.cpp and copy from there).
 
