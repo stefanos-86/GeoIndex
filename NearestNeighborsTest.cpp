@@ -198,6 +198,9 @@ TEST(KNearestNeighbor, zeroK) {
 /** This class makes little sense. It is just to show how to use custom classes. */
 class PointAndClick {
 public:
+    PointAndClick() :
+        x(0), y(0), z(0)
+        {};
     int x;
     int y;
     int z;
