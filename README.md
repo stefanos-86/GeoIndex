@@ -65,6 +65,7 @@ Check the comments above the methods in the classes for more details.
 
 0. NoIndex<...>, simple brute-force method. It can be fast enough.
 0. AabbIndex<...>, takes the points in the "axis aligned bounding box" around the reference. ...slower than the brute force method. My implementation must be very poor.
+
 0 PermutationAabbIndex<...>, same as AabbIndex with different internal data structures. It is even worst.
 0. CubeIndex<...>, the fastest (in my tests!). A "voxel style" method that groups the points in cubes, then just works in the "right" cubes. Careful with the constructor parameter (cube size): too big, and it can't discard many useless points; too small and it has to work on too many cubes.
 0. BoostIndex<...> is just a wrapper around [Boost spatial indexes](https://www.boost.org/doc/libs/1_69_0/libs/geometry/doc/html/geometry/spatial_indexes.html) to have a comparison with the "state of art". It takes ages to build the indexes, but it is 10 times faster than anything else when doing a lookup. You should NOT use this one... I mean, you have Boost alredy, just use it directly! 
