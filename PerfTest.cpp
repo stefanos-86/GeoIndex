@@ -2,32 +2,33 @@
 
 #include <iostream>
 #include <ctime>
+#include <sstream>
 
 #include "NoIndex.hpp"
 #include "AabbIndex.hpp"
 #include "CubeIndex.hpp"
+#include "PermutationAabbIndex.hpp"
+#include "BoostIndex.hpp"
 
 #include "NearestNeighbors.hpp"
 
 namespace geoIndex {
+  
     
-class PoorMansTimer{
+class PoorMansTimerString{
 public:
-    PoorMansTimer(const std::string& message) :
-    message(message),
+    PoorMansTimerString() :
     begin(std::clock()) { }
-
-    ~PoorMansTimer() {
+    
+    double stop() {
         clock_t end = std::clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-        std::cout << message << ": " << elapsed_secs<< std::endl;
-}
-  
+        
+        return elapsed_secs;
+    }
+    
 private:
-  const std::string message;
   clock_t begin;
-
 };
 
 
@@ -63,7 +64,6 @@ static const std::vector<Point>& redMesh() {
 }
 
 TEST(performance, prepareInitFirstUse) {
-    PoorMansTimer("Test the timer");
     redMesh<1000>();
     redMesh<10000>();
     redMesh<100000>();
@@ -72,21 +72,26 @@ TEST(performance, prepareInitFirstUse) {
 }
 
 
+void tableHeader() {
+    printf("%20s|%20s|%20s|%20s|%20s\n", "Mesh size", "index preparation", "point lookup", "found points", "search distance");
+}
+
 template<typename INDEX>
-void singleLookupTest(INDEX index, const std::vector<Point>& redMesh, double distance) {
-    {
-        auto t = PoorMansTimer("Index preparation");
+void singleLookupTest_tabulated(INDEX index, const std::vector<Point>& redMesh, double distance) {
+    
+        PoorMansTimerString tPreparation;
         BuildIndex(redMesh, index);
-    }
+        double indexPreparation = tPreparation.stop();
+    
 
     const Point lookupPoint{0, 0, 0};
     std::vector<IndexAndSquaredDistance<Point> > results;
-    {
-        auto t = PoorMansTimer("Lookup time");
+    
+        PoorMansTimerString tLookup;
         index.pointsWithinDistance(lookupPoint, distance, results);
-    }
-
-    std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result. 
+        double lookup = tLookup.stop();
+    
+    printf("%20lu|%20f|%20f|%20lu|%20f\n", redMesh.size(), indexPreparation, lookup, results.size(), distance);
 }
 
 template<typename INDEX>
@@ -95,162 +100,275 @@ void multipleLookupTest(INDEX index, const std::vector<Point>& redMesh, const st
     static const size_t neededNearest = 2;
 
     std::vector<IndexAndSquaredDistance<Point> > results;
-    {
-        auto t = PoorMansTimer("Several lookups time");
+    
+        PoorMansTimerString t;
         for (const auto& p : greenMesh)
             KNearestNeighbor(index, distance, p, neededNearest, results);
+        double elapsed = t.stop();
+        
+        printf("Red mesh size: %20lu, Green mesh size: %20lu, distance, %20f, points found %20lu, time %20f\n",
+               redMesh.size(), greenMesh.size(), distance, results.size(), elapsed);
+}
+
+
+TEST(PerformanceTest, collectionSize_noIndex) {
+    tableHeader();
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000>(), 100);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<10000>(), 100);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<100000>(), 100);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 100);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
     }
     
-    std::cout << "Found points " << results.size() << std::endl; //Ask the compiler not to optimize-out the result.
+    std::cout << std::endl;
+}
+
+
+TEST(PerformanceTest, collectionSize_aabb) {
+    tableHeader();
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000>(), 100);
+    }
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<10000>(), 100);
+    }
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<100000>(), 100);
+    }
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 100);
+    }
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
+    }
+    
+    std::cout << std::endl;
+}
+
+
+TEST(PerformanceTest, collectionSize_cube) {
+    tableHeader();
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000>(), 100);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<10000>(), 100);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<100000>(), 100);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 100);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
+    }
+    
+    std::cout << std::endl;
+}
+
+
+TEST(PerformanceTest, collectionSize_aabbWithPermutation) {
+    tableHeader();
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000>(), 100);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<10000>(), 100);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<100000>(), 100);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 100);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
+    }
+    
+    std::cout << std::endl;
+}
+
+TEST(PerformanceTest, collectionSize_boost) {
+    tableHeader();
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<1000>(), 100);
+    }
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<10000>(), 100);
+    }
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<100000>(), 100);
+    }
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<200000>(), 100);
+    }
+    printf("%20s|%s\n", "1000000", "not tested - index preparation too long");
+   /* {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
+    }*/
+    
+    std::cout << std::endl;
+}
+
+TEST(PerformanceTest, searchDistance_noIndex) {
+    tableHeader();
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 1);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 10);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 50);
+    }
+   
+    std::cout << std::endl;
+}
+
+TEST(PerformanceTest, searchDistance_aabb) {
+    tableHeader();
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 1);
+    }
+    {
+        AabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 10);
+    }
+    {
+        NoIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 50);
+    }
+   
+    std::cout << std::endl;
+}
+
+
+TEST(PerformanceTest, searchDistance_cube) {
+    tableHeader();
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 1);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 10);
+    }
+    {
+        CubeIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 50);
+    }
+   
+    std::cout << std::endl;
+}
+
+TEST(PerformanceTest, searchDistance_permutation) {
+    tableHeader();
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 1);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 10);
+    }
+    {
+        PermutationAabbIndex<Point> index(10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 50);
+    }
+   
+    std::cout << std::endl;
+}
+
+
+TEST(PerformanceTest, searchDistance_boost) {
+    tableHeader();
+    printf("(Reduced mesh size - index creation too slow to stand...)\n");
+    { 
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<100000>(), 1);
+    }
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<100000>(), 10);
+    }
+    {
+        BoostIndex<Point> index;
+        singleLookupTest_tabulated(index, redMesh<100000>(), 50);
+    }
+   
+    std::cout << std::endl;
 }
 
 
 
+/* Multiple lookups test: check for caching effects. */
+TEST(PerformanceTest, multipleLookups) {
+    { 
+        printf ("no index - ");
+        NoIndex<Point> index;
+        multipleLookupTest(index, redMesh<200000>(), redMesh<1000>(), 30);
+    }
+    { 
+        printf ("aabb - ");
+        AabbIndex<Point> index(10);
+        multipleLookupTest(index, redMesh<200000>(), redMesh<1000>(), 30);
+    }
+    { 
+        printf ("cube - ");
+        CubeIndex<Point> index(10);
+        multipleLookupTest(index, redMesh<200000>(), redMesh<1000>(), 30);
+    }
+    { 
+        printf ("permutation - ");
+        PermutationAabbIndex<Point> index;
+        multipleLookupTest(index, redMesh<200000>(), redMesh<1000>(), 30);
+    }
+    { 
+        printf ("boost - ");
+        BoostIndex<Point> index;
+        multipleLookupTest(index, redMesh<200000>(), redMesh<1000>(), 30);
+    }
 
-/* Variation in collection size. */
-TEST(PerformanceTest, noIndex_1000) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<1000>(), 100);
+    std::cout << std::endl;
 }
-
-TEST(PerformanceTest, aabb_1000) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<1000>(), 100);
-}
-
-TEST(PerformanceTest, cube_1000) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<1000>(), 100);
-}
-
-
-TEST(PerformanceTest, noIndex_10000) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<10000>(), 100);
-}
-
-TEST(PerformanceTest, aabb_10000) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<10000>(), 100);
-}
-
-TEST(PerformanceTest, cube_10000) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<10000>(), 100);
-}
-
-
-TEST(PerformanceTest, noIndex_100000) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<100000>(), 100);
-}
-
-TEST(PerformanceTest, aabb_100000) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<100000>(), 100);
-}
-
-TEST(PerformanceTest, cube_100000) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<100000>(), 100);
-}
-
-
-TEST(PerformanceTest, noIndex_200000) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 100);
-}
-
-TEST(PerformanceTest, aabb_200000) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 100);
-}
-
-TEST(PerformanceTest, cube_200000) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<200000>(), 100);
-}
-
-TEST(PerformanceTest, noIndex_1000000) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<1000000>(), 100);
-}
-
-TEST(PerformanceTest, aabb_1000000) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<1000000>(), 100);
-}
-
-TEST(PerformanceTest, cube_1000000) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<1000000>(), 100);
-}
-
-
-/* Variation in search distance. */
-
-TEST(PerformanceTest, noIndex_d1) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 1);
-}
-
-TEST(PerformanceTest, aabb_d1) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 1);
-}
-
-TEST(PerformanceTest, cube_d1) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<200000>(), 1);
-}
-
-
-TEST(PerformanceTest, noIndex_d10) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 10);
-}
-
-TEST(PerformanceTest, aabb_d10) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 10);
-}
-
-TEST(PerformanceTest, cube_d10) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<200000>(), 10);
-}
-
-
-TEST(PerformanceTest, noIndex_d50) {
-    NoIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 50);
-}
-
-TEST(PerformanceTest, aabb_d50) {
-    AabbIndex<Point> index;
-    singleLookupTest(index, redMesh<200000>(), 50);
-}
-
-TEST(PerformanceTest, cube_d50) {
-    CubeIndex<Point> index(10);
-    singleLookupTest(index, redMesh<200000>(), 50);
-}
-
-
-TEST(PerformanceTest, noIndex_multipleLookups) {
-    NoIndex<Point> index;
-    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
-}
-
-TEST(PerformanceTest, aabb_multipleLookups) {
-    AabbIndex<Point> index;
-    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
-}
-
-TEST(PerformanceTest, cube_multipleLookups) {
-    CubeIndex<Point> index(10);
-    multipleLookupTest(index, redMesh<1000000>(), redMesh<1000>(), 30);
-}
-
 
 }
