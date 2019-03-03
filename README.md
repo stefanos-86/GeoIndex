@@ -2,7 +2,7 @@
 Or: the [k-nearest-neighbor](https://en.wikipedia.org/wiki/Nearest_neighbor_search) for dummies.
 
 Some code to find the closest points in space to a given reference point, done on the cheap.
-This code is meant to be good enough for an inexperienced programmer to use and be decently fast.
+This code is meant to be good enough for an inexperienced programmer to use and to be decently fast.
 No, it is nowhere near the optimal solution, and its design/coding/speed/anything can certainly be improved. I warned you.
 
 ## How to use
@@ -10,7 +10,8 @@ No, it is nowhere near the optimal solution, and its design/coding/speed/anythin
 * cmake .  (mind the '.'!)
 * make
 
-Requires GTest and its dependencies.
+Requires GTest and its dependencies. 
+Requires Boost as well, but only for one of the algorithms. Just delete it if you can't have Boost.
 
 Make will give 4 executables with the unit and performance tests.
 The *_checked variants have self-check assertions inside (for some overflows, indexing errors...) but are a lot slower.
@@ -59,12 +60,14 @@ Whichever is fastest on your data.
 
 The speed depends on what you feed to the algorithms (are the points clustered togheter? Very distant?...).
 
-There are 3 possibilities. They all work the same, like in the example above.
+There are 5 possibilities. They all work the same, like in the example above.
 Check the comments above the methods in the classes for more details.
 
 0. NoIndex<...>, simple brute-force method. It can be fast enough.
 0. AabbIndex<...>, takes the points in the "axis aligned bounding box" around the reference. ...slower than the brute force method. My implementation must be very poor.
+0 PermutationAabbIndex<...>, same as AabbIndex with different internal data structures. It is even worst.
 0. CubeIndex<...>, the fastest (in my tests!). A "voxel style" method that groups the points in cubes, then just works in the "right" cubes. Careful with the constructor parameter (cube size): too big, and it can't discard many useless points; too small and it has to work on too many cubes.
+0. BoostIndex<...> is just a wrapper around [Boost spatial indexes](https://www.boost.org/doc/libs/1_69_0/libs/geometry/doc/html/geometry/spatial_indexes.html) to have a comparison with the "state of art". It takes ages to build the indexes, but it is 10 times faster than anything else when doing a lookup. You should NOT use this one... I mean, you have Boost alredy, just use it directly! 
 
 Don't forget to time how long does it take to prepare the index! It may "eat" all you gain with faster searches.
 

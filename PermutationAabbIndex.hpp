@@ -20,6 +20,7 @@ namespace geoIndex {
    * Inspired by the much, much more optimized data structure in "Compact Data Strucutres, a practical approach"
    * (by Gonzalo Navarro). See its section 5.4.1.
    * 
+   * It's still rubbish, but that's likely to be my fault. It was worth an attempt, but it did not work as hoped.
    */
 template <typename POINT>
 class PermutationAabbIndex {
