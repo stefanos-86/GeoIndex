@@ -30,7 +30,7 @@ link_directories(
 # -march=native to optimize even more (but the binary can not be used on another machine, or with valgrind).
 # -Wall to spot issues.
 # -fopenmp because (with gomp below) gives parallel algorithms before having c++17 (not used)
-add_definitions(-std=c++11 -Wall )
+add_definitions(-std=c++11 -Wall -O3)
 
 set (FILES_TO_COMPILE
      BasicGeometryTest.cpp

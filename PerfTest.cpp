@@ -236,11 +236,10 @@ TEST(PerformanceTest, collectionSize_boost) {
         BoostIndex<Point> index;
         singleLookupTest_tabulated(index, redMesh<200000>(), 100);
     }
-    printf("%20s|%s\n", "1000000", "not tested - index preparation too long");
-   /* {
+    {
         BoostIndex<Point> index;
         singleLookupTest_tabulated(index, redMesh<1000000>(), 100);
-    }*/
+    }
     
     std::cout << std::endl;
 }
@@ -321,18 +320,17 @@ TEST(PerformanceTest, searchDistance_permutation) {
 
 TEST(PerformanceTest, searchDistance_boost) {
     tableHeader();
-    printf("(Reduced mesh size - index creation too slow to stand...)\n");
     { 
         BoostIndex<Point> index;
-        singleLookupTest_tabulated(index, redMesh<100000>(), 1);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 1);
     }
     {
         BoostIndex<Point> index;
-        singleLookupTest_tabulated(index, redMesh<100000>(), 10);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 10);
     }
     {
         BoostIndex<Point> index;
-        singleLookupTest_tabulated(index, redMesh<100000>(), 50);
+        singleLookupTest_tabulated(index, redMesh<200000>(), 50);
     }
    
     std::cout << std::endl;
