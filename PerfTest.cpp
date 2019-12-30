@@ -164,7 +164,6 @@ TEST(PerformanceTest, collectionSize_aabb) {
     std::cout << std::endl;
 }
 
-
 TEST(PerformanceTest, collectionSize_cube) {
     tableHeader();
     {

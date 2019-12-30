@@ -59,11 +59,14 @@ namespace geoIndex {
        
     private:
     /* Alternative: the usual 3D matrix. But with that (vector in vector in vector) I would have to know the size in advance.
-     That would give direct access, this may work better if there are many empty cubes (that don't get created). */
+     That would give direct access, this may work better if there are many empty cubes (that don't get created).
+     The hashing for integer indexes seems to be already optimal (tested by using a "return index" hashing function).
+     A normal (not unordered) map gave slightly faster lookup times, but longer index construction times.
+      */
     std::unordered_map<CubicCoordinate,  // i
                       std::unordered_map<CubicCoordinate, // j
                                         std::unordered_map<CubicCoordinate, Cube<POINT> > > > cubes;  // k and content.
-// TODO: may be worth to check the hashing. And also a map that index on (i, j, k) triplets or other i, j, k combinations.
+    //And also a map that index on (i, j, k) triplets or other i, j, k combinations.
     };
     
 
@@ -134,7 +137,8 @@ public:
             StopDifferenceUnderflow<CubicCoordinate>(iReference, scanDistance);
             StopDifferenceUnderflow<CubicCoordinate>(jReference, scanDistance);
             StopDifferenceUnderflow<CubicCoordinate>(kReference, scanDistance);
-        #endif   
+        #endif
+        
         
         for (CubicCoordinate i = iReference - scanDistance; i <= iReference + scanDistance; i++)
             for (CubicCoordinate j = jReference - scanDistance; j <= jReference + scanDistance; j++)
@@ -143,6 +147,7 @@ public:
                     std::copy(foundPoints.begin(), foundPoints.end(), std::back_inserter(indicesOfCandidates));
                 }
                 
+
         const auto distanceLimit = d * d;
                                                                    
         #ifdef GEO_INDEX_SAFETY_CHECKS
@@ -150,6 +155,8 @@ public:
         #endif
         
         // Now take only the points really inside d and sort the output.
+        // This step could be done inside the triple loop above to avoid a call to std::copy, but 
+        // the performances remain the same.
         output.clear();
         output.reserve(indicesOfCandidates.size()); //May reserve more than necessary.
         for (const auto candidateIndex : indicesOfCandidates) {
